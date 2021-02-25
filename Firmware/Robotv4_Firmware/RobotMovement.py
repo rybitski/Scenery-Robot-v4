@@ -19,7 +19,7 @@ import configparser
 address = 128
 
 # Creating the RoboClaw object, serial port and baudrate passed
-roboclaw = Roboclaw("/dev/ttyS0", 115200)
+roboclaw = Roboclaw("/dev/ttyAMA1", 115200)
 
 # Starting communication with the RoboClaw hardware
 roboclaw.Open()
@@ -37,25 +37,25 @@ pure_angle = 0.0
 config = configparser.ConfigParser()
 config.read("config.ini")
 
-TICKS_PER_INCH = config["MEASUREMENTS"]["TICKS_PER_INCH"]
-TICKS_PER_REVOLUTION = config["MEASUREMENTS"]["TICKS_PER_REVOLUTION"]
+TICKS_PER_INCH = float(config["MEASUREMENTS"]["TICKS_PER_INCH"])
+TICKS_PER_REVOLUTION = float(config["MEASUREMENTS"]["TICKS_PER_REVOLUTION"])
 
-ROBOT_WIDTH = config["MEASUREMENTS"]["ROBOT_WIDTH"] #In Inches
+ROBOT_WIDTH = float(config["MEASUREMENTS"]["ROBOT_WIDTH"]) #In Inches
 
 prev_coord = [0,0]
 
 #M2 IS RIGHT WHEEL, M1 IS LEFT WHEEL
 t = 0
 t_i = 0
-LOOKAHEAD_DISTANCE = config["PURSUIT"]["LOOKAHEAD_DISTANCE"]
+LOOKAHEAD_DISTANCE = float(config["PURSUIT"]["LOOKAHEAD_DISTANCE"])
 pos = [0.0,0.0]
 
 #VELOCITY/ACCEL CONSTANTS IN INCHES PER SECOND
-MAX_VEL = config["PURSUIT"]["MAX_VEL"]
-START_VEL = config["PURSUIT"]["START_VEL"]
-TURN_CONST = config["PURSUIT"]["TURN_CONST"]
-MAX_ACCEL = config["PURSUIT"]["MAX_ACCEL"]
-MAX_VEL_CHANGE = config["PURSUIT"]["MAX_VEL_CHANGE"]
+MAX_VEL = float(config["PURSUIT"]["MAX_VEL"])
+START_VEL = float(config["PURSUIT"]["START_VEL"])
+TURN_CONST = float(config["PURSUIT"]["TURN_CONST"])
+MAX_ACCEL = float(config["PURSUIT"]["MAX_ACCEL"])
+MAX_VEL_CHANGE = float(config["PURSUIT"]["MAX_VEL_CHANGE"])
 
 #ENCODER DATA FUNCTIONS------------------------------------------------------
 
