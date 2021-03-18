@@ -1,0 +1,351 @@
+* {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+button:hover {
+  opacity: 0.5;
+}
+
+.headerContainer {
+  height: 100vh;
+  width: 100%;
+  background-color: lightgray;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  display: flex;
+  height: 33px;
+  width: 100%;
+  /*background-color: #696969;*/
+  background-color: black;
+  padding: 0.5%;
+
+  position: relative;
+}
+
+.logo {
+  background-color: black;
+  float: left;
+  width: 200px;
+  height: 30px;
+  color: #00adb5;
+  font-size: 25px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.navlinks {
+  float: right;
+  position: absolute;
+  width: 40%;
+  height: 30px;
+  background-color: purple;
+  right: 1.5%;
+}
+
+.innerContainer {
+  width: auto;
+  height: 100%;
+  background-color: #696969;
+  margin: 1%;
+  padding: 0.5%;
+}
+
+.leftContainer {
+  display: flex;
+  width: 70%;
+  height: 100%;
+  background-color: white;
+  float: left;
+  position: relative;
+}
+
+.leftContainer .popup {
+  width: 100px;
+  height: 25px;
+  position: absolute;
+  top: 2%;
+  right: 1%;
+  cursor: pointer;
+  text-align: center;
+  z-index: 10;
+  line-height: 25px;
+  background-color: white;
+  border: 1px solid black;
+}
+
+/* The actual popup */
+.popuptext,
+.pointsPopup {
+  visibility: hidden;
+  width: 200px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 100;
+}
+.popuptext {
+  top: 1%;
+  right: 13%;
+}
+
+.pointsPopup {
+  right: 1%;
+  bottom: 1%;
+  opacity: 0.7;
+}
+
+.show {
+  visibility: visible;
+  animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.leftContainer .stageDimensions {
+  z-index: 10;
+  width: 120px;
+  height: 40px;
+  background-color: lightgray;
+  position: absolute;
+  left: 1%;
+  top: 2%;
+  padding: 1%;
+}
+
+.backgroundCanvas,
+.topCanvas,
+.pointsCanvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+}
+.backgroundCanvas {
+  background-color: white;
+  z-index: 1;
+}
+.topCanvas {
+  z-index: 5;
+  visibility: visible;
+}
+.pointsCanvas {
+  visibility: hidden;
+  z-index: 10;
+}
+
+.rightContainer {
+  width: 30%;
+  height: 100%;
+  background-color: lightgray;
+  float: right;
+  display: flex;
+  flex-direction: column;
+  z-index: 11;
+}
+
+.inputArea {
+  width: auto;
+  height: 40%;
+  margin: 1%;
+  background-color: white;
+  padding: 1%;
+  display: flex;
+  flex-direction: column;
+}
+
+.inputArea label {
+  font-size: 20px;
+}
+
+.inputArea input[type="text"] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 5px 0;
+  box-sizing: border-box;
+  border: none;
+  background-color: lightgray;
+  color: black;
+}
+
+.inputArea h5 {
+  margin-top: 1%;
+}
+
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+  background-color: white;
+  height: 25px;
+  display: flex;
+}
+
+.sldr {
+  -webkit-appearance: none;
+  margin-top: 5px;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+}
+
+.sldr::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: black;
+  cursor: pointer;
+}
+
+.slidecontainer .sliderOutput {
+  text-align: center;
+  line-height: 25px;
+  width: 20%;
+  height: 25px;
+  float: right;
+  color: black;
+}
+
+.toggleAndButtons {
+  width: auto;
+  height: auto;
+  flex-grow: 1;
+  background-color: lightgray;
+  padding: 2%;
+  align-items: center;
+  display: inline-flex;
+}
+/*toggle button stuff*/
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #696969;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+/*to make the innner box move left and right*/
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: darkgrey;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px darkgrey;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.toggleAndButtons button {
+  width: 30%;
+  height: 34px;
+  padding: 1%;
+  border-style: none;
+  border: none;
+  margin-left: 11%;
+  text-decoration: none;
+  cursor: pointer;
+}
+/* end toggle button stuff*/
+.ouputContainer {
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  height: 60%;
+  margin: 1%;
+  background-color: white;
+  padding: 1%;
+}
+
+.xAndYCoordinates {
+  width: auto;
+  height: 50%;
+  background-color: lightgray;
+  margin: 0.5%;
+  color: black;
+  font-size: 18px;
+  padding: 1%;
+  text-align: justify;
+  overflow-y: auto;
+}
+.controls {
+  width: auto;
+  height: 40%;
+  background-color: lightgray;
+  margin: 0.5%;
+  display: flex;
+  flex-direction: row;
+}
+
+.buttonInnerContainer {
+  width: 100%;
+  padding: 1%;
+  display: flex;
+  flex-direction: column;
+  background-color: lightgray;
+}
+.controls button {
+  width: auto;
+  height: 50%;
+  margin: 1%;
+  border-style: none;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: white;
+  opacity: 0.8;
+}

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--  This is the css for the index.html page-->
+    <link rel="stylesheet" href="styles.css" />
+
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="headerContainer">
+      <!--          This is the navbar        -->
+      <div class="navbar">
+        <div class="logo">
+          Scenery Robot
+        </div>
+        <div class="navlinks"></div>
+      </div>
+
+      <!--          This container holds the canvas and the right input and output container        -->
+      <div class="innerContainer">
+        <!--          These are the canvases       -->
+        <div class = "leftContainer"> 
+          <canvas
+          id="gridCanvas"
+          class="backgroundCanvas"> <!-- This canvas stores grid lines-->
+        </canvas>
+        <canvas
+          id="drawingCanvas"
+          class="topCanvas"><!-- This canvas stores user drawn lines-->
+        </canvas>
+        <canvas 
+          id="pointsCanvas"
+          class="pointsCanvas"> <!-- This canvas is used to display the extracted points-->
+        </canvas>
+        <div class="popup" onclick = "newTrack()">New Track </div>
+        <span class="popuptext" id="myPopup">Invalid Stage Dimensions</span>
+        <span class="pointsPopup" id="pointsPopup">Points Are On</span>
+        <!--   <span class="popuptext" id="myPopup">Fix the Dimensions </span> -->
+        <div class = "stageDimensions" id = "displayDim">
+          Width:
+          <br>
+          Length:
+        </div>
+        </div>
+
+        <!--          This is the right side input and output contianer       -->
+        <div class="rightContainer">
+
+          <!--          This is the top input area of the right contianer        -->
+          <div class="inputArea">
+            <form>
+              <label for="width">Width of Stage:</label>
+              <input id = "stageWidth" type="text" value="" />
+              <label for="length">Length of Stage:</label>
+              <input id = "stageHeight" type="text" value="" />
+            </form>
+            <h5>Number of Points to Extract (In X second intervals)</h5>
+            <div class="slidecontainer">
+              <input
+                type="range"
+                min=".01"
+                max="1"
+                step=".01"
+                value=".05"
+                class="sldr"
+                id="myRange"
+              ></input >
+              <p id = "demo" class="sliderOutput"></p>
+            </div>
+            <div class = "toggleAndButtons">
+              <label class="switch">
+                <input onclick="myFunction()" type="checkbox">
+                <span class="slider"></span>
+              </label>
+              <button type="clearButton" onclick = "reloadPage()"> Reset </button>
+              <button onclick = "displayPoints()" type="getPoints">Get Points</button>
+            </div>
+          </div>
+
+          <!--          This is the  bottom output container      -->
+          <div class = "ouputContainer">
+            <div class = "xAndYCoordinates" id = "xAndYCoordinates"> </div>
+            <div class = controls> 
+              <div class = "buttonInnerContainer">
+                <button id = "undoButton"> Undo Drawing</button>
+                <button id = "copyButton" onclick="copyPointsFunction()"> Copy Points to Clipboard</button>
+                <button id = "deleteInBetween" onclick = "eraseFunction()"> Erase</button>
+              </div>
+              <div class = "buttonInnerContainer">
+                <button onclick = "drawCoordinates()"> Draw Points</button>
+                <button id = "saveButton"> Save Points to File</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<!-- Javascript-->
+<script>
+  /*                                  Begin Seconds Range Slider Section                              */
+  var slider = document.getElementById("myRange");
+  var output = document.getElementById("demo");
+  output.innerHTML = slider.value +" sec";
+
+  slider.oninput = function () {
+    output.innerHTML = this.value + " sec";
+  };
+  /*                                  End Seconds Range Slider Section                              */
+
+  /*                                   Begin Display Grid (via Toggle Button) Section                      */
+  var isGridToggled = false;
+  function myFunction() {
+    var elnt = document.getElementById("gridCanvas");
+    if (isGridToggled == false) {
+      isGridToggled  = true;
+      elnt.style.visibility = "visible";
+      displayGrid();
+    } else {
+      elnt.style.visibility = "hidden";
+      isGridToggled = false;
+    }
+  }
+
+    //The following code draws a grid on a canvas
+  //in order to get the grid to turn on and off, we will have to stack two canvas' on top of each other:
+  //one canvas will be for the grid, one will be for user drawing. When the grid switch is toggled, the grid canvas is set to visible
+  gridCanvas = document.getElementById("gridCanvas"); //get the canvas by name
+  var ctx = gridCanvas.getContext("2d"); //set its dimentions to 2d
+  ctx.canvas.width = gridCanvas.getBoundingClientRect().width;
+  ctx.canvas.height = gridCanvas.getBoundingClientRect().height;
+
+  gridWidth = gridCanvas.getBoundingClientRect().width;
+  gridHeight = gridCanvas.getBoundingClientRect().height;
+  function displayGrid(){
+    var p = 0;
+    clearGrid();
+    function drawBoard() {
+      //Prints all the vertical lines of the grid
+      for (var x = 0; x <= gridWidth; x += gridCanvas.getBoundingClientRect().width / 40) {
+        ctx.moveTo(x + p, p);
+        ctx.lineTo(x + p, gridHeight + p);
+      }
+      //Prints all the horizontal lines of the grid
+      for (var x = 0; x <= gridHeight; x += gridCanvas.getBoundingClientRect().height / 24) {
+        ctx.moveTo(p, x + p);
+        ctx.lineTo(gridWidth + p, x + p);
+      }
+      
+      ctx.strokeStyle = "gray";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    drawBoard();
+  }
+
+  function clearGrid(){
+    ctx = null;
+    ctx = gridCanvas.getContext("2d"); //set its dimentions to 2d
+    ctx.canvas.width = gridCanvas.getBoundingClientRect().width;
+    ctx.canvas.height = gridCanvas.getBoundingClientRect().height;
+  }
+/*                                   End Display Grid (via Toggle Button) Section                      */
+
+/*                                          Begin User Drawing Section                              */
+drawingCanvas = document.getElementById("drawingCanvas"); //get the canvas by name
+var context = drawingCanvas.getContext("2d"); //set its dimentions to 2d
+context.canvas.width = drawingCanvas.getBoundingClientRect().width;
+context.canvas.height = drawingCanvas.getBoundingClientRect().height;
+
+context.lineWidth = 1;
+context.lineCap = "round";
+context.strokeStyle = "black";
+var pos = { x: 0, y: 0 }; //the initial values of this list dont matter as they are overwritten by the current position of the pointer
+var fullMouseHistoryX=[]; 
+var fullMouseHistoryY=[];
+var fullMouseHistoryPoints = [];
+var criticalPointsList = []; //this list stores all the critical points extracted at specified intervals
+var pointsSelected = []; //this list stores the two points that are selected and we need to erase everything in the middle
+var realX, realY;
+var timer;
+var startDrawing = false;
+var numPointsSelected = 0;
+
+//every time the mouse moves, a new timer function is called and a set of points are pushed into the array
+var startTimerOnce = true;
+document.addEventListener("mousemove", function (event) {
+  var rect = drawingCanvas.getBoundingClientRect();
+  realmX = ((((event.clientX - rect.left) / (rect.right - rect.left) * drawingCanvas.width)/ rect.width) * stageWidth).toFixed(2);
+  realmY = (stageHeight-((((event.clientY - rect.top) / (rect.bottom - rect.top) * drawingCanvas.height) / rect.height) * stageHeight)).toFixed(2);
+  if (drawingCanvas.contains(event.target)) {
+    if(startDrawing){
+      if(startTimerOnce == true){
+        startTimerOnce = false;
+        timer = setInterval(function(){ 
+          criticalPointsList.push(new criticalPoint(realmX, realmY));
+        }, interval);
+      }
+      draw(window.event);
+    }
+  }
+});
+
+document.onmouseup = function(){
+    clearInterval(timer);
+    startTimerOnce = true;
+    startDrawing = false;
+    /*console.log("the length of the pointsSelected List is", pointsSelected.length);
+    for(var i = 0 ; i< pointsSelected.length; i++){
+      pointsSelected[i].toString();
+    }*/
+}
+
+//when the mouse is pressed down, it check whether there is a line drawn and if the current mouse position is near where the line was last drawn
+document.addEventListener("mousedown", function (event) {
+  var rect = drawingCanvas.getBoundingClientRect();
+  startDrawing = false;
+  var currentXPos, currentYPos;
+  currentXPos = (event.clientX - rect.left) / (rect.right - rect.left) * drawingCanvas.width;
+  currentYPos = (event.clientY - rect.top) / (rect.bottom - rect.top) * drawingCanvas.height;
+  if (drawingCanvas.contains(event.target)) {
+    realX = ((currentXPos / rect.width) * stageWidth).toFixed(2);
+    realY = (stageHeight-((currentYPos / rect.height) * stageHeight)).toFixed(2);
+    
+    //if we want to draw, we have to go through this if-else
+    if(fullMouseHistoryX.length > 0 && fullMouseHistoryY.length > 0){ //if there is a list of old mouse locations
+      var r = new MyRect(fullMouseHistoryX[fullMouseHistoryX.length-1]-10, fullMouseHistoryY[fullMouseHistoryY.length-1]-10, 20, 20);
+      if(r.contains(currentXPos, currentYPos)){
+        startDrawing = true;
+        criticalPointsList.push(new criticalPoint(realX, realY));
+        setPosition(window.event);
+      }
+    }else{
+      startDrawing = true;
+      criticalPointsList.push(new criticalPoint(realX, realY));
+    }
+  }
+
+  if(document.getElementById("pointsCanvas").contains(event.target)){
+    var pointsCanvasX ;
+    var pointsCanvasY ;
+    var criticalPointRectangle;
+    if(criticalPointsList.length > 0){
+      for(var i = 0; i < criticalPointsList.length; i++){
+        pointsCanvasX = ((criticalPointsList[i].x / stageWidth)* rect.width).toFixed(2);
+        pointsCanvasY = ((((criticalPointsList[i].y-stageHeight)/-1)/stageHeight)*rect.height).toFixed(2);
+        criticalPointRectangle = new MyRect(pointsCanvasX-5, pointsCanvasY-5, 10, 10); //using mouse location to get a bounding box
+        if(criticalPointRectangle.contains(currentXPos, currentYPos)){
+            
+          if(numPointsSelected < 2){
+            console.log("top if statement");
+            if(pointsSelected.includes(criticalPointsList[i])){
+              alert("You cannot add the same two points. Please select another point");
+              return;
+            }
+            criticalPointsList[i].setClickTrue();
+            pointsSelected.push(criticalPointsList[i]);
+            calculatePoints();
+            numPointsSelected++;
+            return;
+          }
+          if(pointsSelected.includes(criticalPointsList[i])){
+            pointsSelected.splice(pointsSelected.indexOf(criticalPointsList[i]),1);
+            criticalPointsList[i].setClickFalse();
+            numPointsSelected--;
+            calculatePoints();
+            return;
+          }
+        }
+      }
+    }
+  }
+});
+
+// new position from mouse event
+function setPosition(e) {
+  var rect = drawingCanvas.getBoundingClientRect();
+  currentXPos = (event.clientX - rect.left) / (rect.right - rect.left) * drawingCanvas.width;
+  currentYPos = (event.clientY - rect.top) / (rect.bottom - rect.top) * drawingCanvas.height;
+  pos.x = currentXPos;
+  pos.y = currentYPos;
+  fullMouseHistoryPoints.push(new criticalPoint(pos.x, pos.y));
+  fullMouseHistoryX.push(pos.x);
+  fullMouseHistoryY.push(pos.y);
+}
+
+function MyRect (x, y, w, h) {
+  this.x = x;
+  this.y = y;
+  this.width = w;
+  this.height = h;
+
+  this.contains = function (x, y) {
+      return this.x <= x && x <= this.x + this.width &&
+              this.y <= y && y <= this.y + this.height;
+  }
+  this.draw = function (ctx) {
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 5;
+        ctx.rect(this.x, this.y, this.width, this.height);
+    }
+  this.toString = function(){
+    console.log("x: "+this.x," y: "+ this.y," width: " + this.width," height: " +this.height);
+  }
+}
+
+function criticalPoint(x, y){
+  this.x = x;
+  this.y = y;
+  this.isClicked = false;
+
+  this.setClickTrue = function(){
+    this.isClicked = true;
+  }
+  this.setClickFalse = function(){
+    this.isClicked = false;
+  }
+  this.toString = function(){
+    console.log("Critical Point at: ", this.x, this.y);
+  }
+}
+var isValidToDraw = false;
+var isDrawing = false;
+function draw(e) {
+  if(isValidToDraw == true){
+    if (e.buttons !== 1) return;
+    context.strokeStyle = "black";
+    context.lineWidth = 1;
+    isDrawing = true;
+    context.beginPath(); // begin
+    context.moveTo(fullMouseHistoryX[fullMouseHistoryX.length-1], fullMouseHistoryY[fullMouseHistoryY.length-1]); 
+    setPosition(e);
+    context.lineTo(fullMouseHistoryX[fullMouseHistoryX.length-1], fullMouseHistoryY[fullMouseHistoryY.length-1]); 
+    context.stroke(); // draw it!
+  }
+}
+/*                                                      End User Drawing Section                            */
+
+/*                                                    Begin Erase Button Section                            */
+function eraseFunction(){
+  if(numPointsSelected == 2){
+    var indexFirstPoint = criticalPointsList.indexOf(pointsSelected[0]);
+    var indexSecondPoint = criticalPointsList.indexOf(pointsSelected[1]);
+    var distance = Math.max(indexFirstPoint, indexSecondPoint) - Math.min(indexFirstPoint, indexSecondPoint);
+
+    var indexBeginLine; 
+    var indexEngLine;
+    var firstPointRect = new MyRect(pointsSelected[0].x-5, pointsSelected[0].y-5, 10, 10); //get the bounding box of the first cirtical point selected
+    var secondPointRect = new MyRect(pointsSelected[1].x-5, pointsSelected[1].y-5, 10, 10); //bounding box of the second critical point
+    for(var i = 0; i< fullMouseHistoryX.length; i++){
+
+    }
+    criticalPointsList.splice(Math.min(indexFirstPoint, indexSecondPoint)+1, distance-1);
+    calculatePoints();
+  }
+}
+/*                                                      End Erase Button Section                            */
+
+
+/*                                                       Begin Undo Button Section                            */
+  var undoTimer;
+document.getElementById("undoButton").onmousedown = function(event) {
+  //mouse position is recorded everyso intervals, so we can make it that after "undoing that many intervals, the point can be remove"
+  undoTimer = setInterval(function(){
+    fullMouseHistoryX.pop();
+    fullMouseHistoryY.pop();
+    drawLinesFromHistory();
+  }, 50);
+}
+
+document.getElementById("undoButton").onmouseup = function(event) {
+  clearInterval(undoTimer);
+}
+
+function drawLinesFromHistory(){
+  context = null;
+  context = drawingCanvas.getContext("2d"); //set its dimentions to 2d
+  context.canvas.width = drawingCanvas.getBoundingClientRect().width;
+  context.canvas.height = drawingCanvas.getBoundingClientRect().height;
+
+  context.lineWidth = 1;
+  context.lineCap = "round";
+  context.strokeStyle = "black";
+  if(fullMouseHistoryX.length >0  && fullMouseHistoryY.length > 0){
+    for(var i = 0; i< fullMouseHistoryX.length-1; i++){
+      context.beginPath(); // begin
+      context.moveTo(fullMouseHistoryX[i], fullMouseHistoryY[i]);
+      context.lineTo(fullMouseHistoryX[i+1], fullMouseHistoryY[i+1]);
+      context.stroke();
+      if(criticalPointsList.length > 0){
+        checkCriticalPoints();
+      }
+    }
+  }
+}
+
+function checkCriticalPoints(){
+  //the points stored in the mouseHistory lists are in terms of inches, so we have to convert them over to pixel units
+    var CanvasX = ((criticalPointsList[criticalPointsList.length-1].x/ stageWidth)* document.getElementById("pointsCanvas").getBoundingClientRect().width).toFixed(2);
+    var CanvasY = ((((criticalPointsList[criticalPointsList.length-1].y-stageHeight)/-1)/stageHeight)*document.getElementById("pointsCanvas").getBoundingClientRect().height).toFixed(2);
+
+    var r = new MyRect(CanvasX-5, CanvasY-5, 10, 10);
+
+    if(r.contains(fullMouseHistoryX[fullMouseHistoryX.length-1], fullMouseHistoryY[fullMouseHistoryY.length-1])){
+      criticalPointsList.pop();
+      calculatePoints();
+    }
+}
+/*                                                       End Undo Button Section                            */
+
+
+/*                                           Begin Verifying Canvas Dimension Input Section                         */
+var stageWidth = 0;
+var stageHeight = 0;
+var interval = 0;
+var isToggled = false;
+function newTrack(){
+  stageWidth = document.getElementById("stageWidth").value;
+  stageHeight = document.getElementById("stageHeight").value;
+  interval = document.getElementById("myRange").value * 1000; // this will turn the seconds into milliseconds
+
+  var popup = document.getElementById("myPopup");
+  if(stageWidth == 0 || stageHeight == 0){
+    popup.classList.toggle("show");
+    isToggled = true;
+  }else{
+    isValidToDraw = true;
+    if(isToggled == true){
+      popup.classList.toggle("show"); //this will remove the pop up warning
+      isToggled = false;
+    }
+    document.getElementById("displayDim").innerHTML = "Width: " + stageWidth + " inches \n" + "Height: " + stageHeight + " inches";
+    //recordMouseHistory();
+  }
+}
+/*                                          End Verifying Canvas Dimension Input Section                           */
+
+/*                                    Begin Addtional Button Functions Section                             */
+function displayPoints(){
+  document.getElementById("xAndYCoordinates").innerHTML = ""; //clear the pre-existing text in the div element
+  for(var i = 0; i < criticalPointsList.length; i++ ){
+    if(i+1 == criticalPointsList.length){ //for the last set of points, do not add the extra comma at the end
+      document.getElementById("xAndYCoordinates").innerHTML += "(" +criticalPointsList[i].x + ", " + criticalPointsList[i].y + ")";
+    }else{
+      document.getElementById("xAndYCoordinates").innerHTML += "(" +criticalPointsList[i].x + ", " + criticalPointsList[i].y + "), ";
+    } 
+  }
+}
+
+function copyPointsFunction(){
+  var copyElement = document.getElementById("xAndYCoordinates"); //select the element
+  var elementText = copyElement.textContent; //get the text content from the element
+  navigator.clipboard.writeText(elementText);
+  alert("Copied the text: " + elementText);
+}
+//function to reload the page and reset everything
+function reloadPage(){
+  location = location.href;
+}
+
+document.querySelector('#saveButton').addEventListener('click', () => {
+  var copyElement = document.getElementById("xAndYCoordinates"); //select the element
+  var elementText = copyElement.textContent; //get the text content from the element
+  downloadToFile(elementText, 'Extracted Points.txt', 'text/plain');
+});
+
+const downloadToFile = (content, filename, contentType) => {
+  const a = document.createElement('a');
+  const file = new Blob([content], {type: contentType});
+  
+  a.href= URL.createObjectURL(file);
+  a.download = filename;
+  a.click();
+
+	URL.revokeObjectURL(a.href);
+};
+/*                                    Begin Addtional Button Functions Section                             */
+
+/*                                        Begin Draw Points on Canvas Section                            */
+var isPointsToggled = false;
+function drawCoordinates(){
+  console.log(fullMouseHistoryX.length);
+  console.log(fullMouseHistoryPoints.length);
+
+  var elnt = document.getElementById("pointsCanvas");
+  if(isPointsToggled == false){
+    isPointsToggled = true;
+    elnt.style.visibility = "visible";
+    document.getElementById("pointsPopup").style.visibility = "visible";
+    calculatePoints();
+  }else{
+    elnt.style.visibility = "hidden";
+    document.getElementById("pointsPopup").style.visibility = "hidden";
+    isPointsToggled = false;
+  }
+}
+
+//this method converts the points stored in the area from real world units (such as inches) to pixels to be displayed
+function calculatePoints(){
+  var pointsCanvas = document.getElementById("pointsCanvas");
+  var rect = pointsCanvas.getBoundingClientRect();
+  var ctx ="";
+  ctx = pointsCanvas.getContext("2d"); //set its dimentions to 2d
+  ctx.canvas.width = pointsCanvas.getBoundingClientRect().width;
+  ctx.canvas.height = pointsCanvas.getBoundingClientRect().height;
+
+  //setting up the brush for all the points
+  ctx.lineWidth = 1;
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "red";
+
+  for(var i = 0; i < criticalPointsList.length; i++){
+    pointsCanvasX = ((criticalPointsList[i].x / stageWidth)* rect.width).toFixed(2);
+    pointsCanvasY = ((((criticalPointsList[i].y-stageHeight)/-1)/stageHeight)*rect.height).toFixed(2);
+    if(criticalPointsList[i].x != null && criticalPointsList[i].y != null ){
+      if(criticalPointsList[i].isClicked == true){
+        ctx.strokeStyle = "green";
+      }else{
+        ctx.strokeStyle = "red";
+      }
+      ctx.beginPath(); // begin
+      ctx.moveTo(pointsCanvasX, pointsCanvasY); // from
+      ctx.lineTo(pointsCanvasX, pointsCanvasY); // to
+      ctx.rect(pointsCanvasX-5, pointsCanvasY-5, 10, 10);
+      ctx.stroke();
+    }
+  }
+}
+/*                                  End Draw Points on Canvas Section                          */
+</script>
