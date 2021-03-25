@@ -14,6 +14,7 @@ import math
 import numpy as np
 import time
 import configparser
+from scipy import interpolate
 
 # address of the RoboClaw as set in Motion Studio
 address = 128
@@ -32,7 +33,6 @@ enc1_prev = 0
 enc2_prev = 0
 
 angle_prev = 0.0
-pure_angle = 0.0
 
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -41,8 +41,6 @@ TICKS_PER_INCH = float(config["MEASUREMENTS"]["TICKS_PER_INCH"])
 TICKS_PER_REVOLUTION = float(config["MEASUREMENTS"]["TICKS_PER_REVOLUTION"])
 
 ROBOT_WIDTH = float(config["MEASUREMENTS"]["ROBOT_WIDTH"]) #In Inches
-
-prev_coord = [0,0]
 
 #M2 IS RIGHT WHEEL, M1 IS LEFT WHEEL
 t = 0
@@ -88,15 +86,20 @@ def update_encoders():
 def path_generation():
     global MAX_VEL, START_VEL, TURN_CONST, MAX_ACCEL
     #PART 1: CALCULATE INITIAL SET OF POINTS FOR PATH
-    crv = BSpline.Curve()
-    # Set degree
-    crv.degree = 3
     # Set control points
-    crv.ctrlpts = [[0, 0], [12, 6], [24,-6], [36,6]]
-    # Set knot vector
-    crv.knotvector = [0, 0, 0, 0, 1, 1, 1, 1]   
-    # Get curve points
-    path = crv.evalpts
+    ctr = np.array( [[0, 0], [12, 6], [24,-6], [36,0]])
+    
+    x=ctr[:,0]
+    y=ctr[:,1]
+
+    tck,u = interpolate.splprep([x,y],k=3,s=0)
+    u=np.linspace(0,1,num=50,endpoint=True)
+    out = interpolate.splev(u,tck)
+
+    path = []
+
+    for i in range(len(out[0])):
+        path.append([out[0][i], out[1][i]])
 
     #PART 2: CALCULATE PATH DISTANCE FOR EACH POINT 
     path[0].append(0)
@@ -136,10 +139,11 @@ def path_generation():
             w[5] = test
         else:
             break
+        
     final_path = []
     for i in path:
-        final_path.append([i[0], i[1], i[5]])
-    
+        final_path.append([i[1], i[0], i[5]])
+
     return final_path
 
 #MAIN ODOMETRY FUNCTION---------------------------------------------------
@@ -150,7 +154,7 @@ def get_global_coord():
     global enc1_prev
     global enc2_prev
     global angle_prev
-    global prev_coord
+    global pos
 
     update_encoders()
 
@@ -175,8 +179,8 @@ def get_global_coord():
     change_y =  total_change * math.sin(angle_prev)
     
     #angle_prev += change_angle
-    prev_coord = [prev_coord[0]+change_x,prev_coord[1]+change_y]
-    return prev_coord
+    pos = [pos[0]+change_x,pos[1]+change_y]
+    return pos
 
 #PURE PURSUIT FUNCTIONS----------------------------------------------------------
 
@@ -221,48 +225,53 @@ def lookahead(path):
 
 #Code taken from https://github.com/arimb/PurePursuit/blob/master/RobotSimulator.py
 def curvature(lookahead, path):
-    global pure_angle, pos
-    side = np.sign(math.sin(3.1415/2 - pure_angle)*(lookahead[0]-pos[0]) - math.cos(3.1415/2 - pure_angle)*(lookahead[1]-pos[1]))
-    a = -math.tan(3.1415/2 - pure_angle)
-    c = math.tan(3.1415/2 - pure_angle)*pos[0] - pos[1]
+    global angle_prev, pos
+    side = np.sign(math.sin(3.1415/2 - angle_prev)*(lookahead[0]-pos[0]) - math.cos(3.1415/2 - angle_prev)*(lookahead[1]-pos[1]))
+    a = -math.tan(3.1415/2 - angle_prev)
+    c = math.tan(3.1415/2 - angle_prev)*pos[0] - pos[1]
     x = abs(a*lookahead[0] + lookahead[1] + c) / math.sqrt(a**2 + 1)
     return side * (2*x/(float(LOOKAHEAD_DISTANCE)**2))
 
 def turn(curv, vel):
-    return [(vel*(2+(curv*ROBOT_WIDTH))/2) , (vel*(2-(curv*ROBOT_WIDTH))/2)]
+    return [vel*(2+(curv*ROBOT_WIDTH))/2 , vel*(2-(curv*ROBOT_WIDTH))/2]
 
 #TESTING FUNCTIONS---------------------------------------------------------------
 def mini_curve():
     roboclaw.SpeedM1(address, 500)
     roboclaw.SpeedM2(address,600)
-    while(get_global_coord()[0] < 12.0):
+    while(get_global_coord()[0] < 26.0):
         my_pos = get_global_coord()
-        print(my_pos)
+    print(my_pos)
     stop()
 
 def speed_test():
-    roboclaw.SpeedM1(address, 1130)
-    roboclaw.SpeedM2(address, 1200)
-    time.sleep(1)
+    while(get_global_coord()[0] < 6.0):
+        roboclaw.SpeedM1(address, 1130)
+        roboclaw.SpeedM2(address, 1130)
+        get_global_coord()
+    while(get_global_coord()[0] < 12.0 and get_global_coord()[0] >= 6.0):
+        roboclaw.SpeedM1(address, 600)
+        roboclaw.SpeedM2(address, 600)
+        get_global_coord
     stop()
 
 def test_follow():
     global enc1, enc2, enc1_prev, enc2_prev, t_i, pos, angle_prev
-    #pure_angle
     path = path_generation()
     angle_prev = math.atan2(path[1][0], path[1][1])
+    #print(path)
+    
     wheels = [0.0, 0.0]
-    #dt = 0.007
+    dt = 0.005
 
-    print(path)
-
-    while(pos[0] < 12.0):
+    while(pos[0] < 36.0):
         look = lookahead(path)
         close = closest(path)
         curv = curvature(look, path) if t_i > close else 0.00001
         vel = path[close][2]
         last_wheels = wheels
         wheels = turn(curv, vel)
+        print(pos)
 
         for i, w in enumerate(wheels):
             wheels[i] = last_wheels[i] + min(float(MAX_VEL_CHANGE) * dt, max(-float(MAX_VEL_CHANGE) * dt, w - last_wheels[i]))
@@ -278,10 +287,18 @@ def test_follow():
         #right_enc_change = enc2 - enc2_prev
         #right_inches = right_enc_change / TICKS_PER_INCH
         #left_inches = left_enc_change/ TICKS_PER_INCH
-        #pos = (pos[0] + (right_inches+ left_inches)/2 * math.sin(pure_angle), pos[1] + (right_inches + left_inches)/2 * math.cos(pure_angle))
-        #pure_angle += math.atan((wheels[0] - wheels[1])/ROBOT_WIDTH * dt)
-        print("Position:", pos)
+        #pos = (pos[0] + (right_inches+ left_inches)/2 * math.sin(angle_prev), pos[1] + (right_inches + left_inches)/2 * math.cos(angle_prev))
+        #angle_prev += math.atan((wheels[0] - wheels[1])/ROBOT_WIDTH * dt)
+        #get_global_coord()
+
+        pos = (pos[0] + (wheels[0]+wheels[1])/2*dt * math.sin(angle_prev), pos[1] + (wheels[0]+wheels[1])/2*dt * math.cos(angle_prev))
+        angle_prev += math.atan((wheels[0]-wheels[1])/ROBOT_WIDTH*dt)
+
     stop()
+    roboclaw.SetEncM1(address, 0)
+    roboclaw.SetEncM2(address, 0)
+    pos= [0.0, 0.0]
+
 
 #MAIN LOOP---------------------------------------------
 
@@ -311,8 +328,6 @@ while(True):
     elif(words[0] == "clear"):
         roboclaw.SetEncM1(address, 0)
         roboclaw.SetEncM2(address, 0)
-    elif(words[0] == "curve"):
-        curve_test()
     elif(words[0] == "mini"):
         mini_curve()
     elif(words[0] == "test"):
