@@ -143,6 +143,9 @@ def path_generation():
     final_path = []
     for i in path:
         final_path.append([i[1], i[0], i[5]])
+    
+    for i,w in enumerate(final_path):
+        final_path[i][0] = final_path[i][0] * -1
 
     return final_path
 
@@ -169,10 +172,10 @@ def get_global_coord():
     #length = 5.5 * TICKS_PER_INCH #This is the length of the robot in inches
     angle_prev += ((right_inches - left_inches) / ROBOT_WIDTH)
 
-    if(angle_prev >= 0):
-        angle_prev = angle_prev % (math.pi * 2)
-    else:
-        angle_prev =  angle_prev % -(math.pi * 2) 
+    #if(angle_prev >= 0):
+    #    angle_prev = angle_prev % (math.pi * 2)
+    #else:
+    #    angle_prev =  angle_prev % -(math.pi * 2) 
 
     #MATH.SIN AND MATH.COS ARE MADE TO TAKE IN A RADIAN VALUE
     change_x = total_change * math.cos(angle_prev) #Change 0 to previously stored angle
@@ -226,9 +229,9 @@ def lookahead(path):
 #Code taken from https://github.com/arimb/PurePursuit/blob/master/RobotSimulator.py
 def curvature(lookahead, path):
     global angle_prev, pos
-    side = np.sign(math.sin(3.1415/2 - angle_prev)*(lookahead[0]-pos[0]) - math.cos(3.1415/2 - angle_prev)*(lookahead[1]-pos[1]))
-    a = -math.tan(3.1415/2 - angle_prev)
-    c = math.tan(3.1415/2 - angle_prev)*pos[0] - pos[1]
+    side = np.sign(math.sin( angle_prev)*(lookahead[0]-pos[0]) - math.cos(angle_prev)*(lookahead[1]-pos[1]))
+    a = -math.tan(angle_prev)
+    c = math.tan(angle_prev)*pos[0] - pos[1]
     x = abs(a*lookahead[0] + lookahead[1] + c) / math.sqrt(a**2 + 1)
     return side * (2*x/(float(LOOKAHEAD_DISTANCE)**2))
 
@@ -258,47 +261,31 @@ def speed_test():
 def test_follow():
     global enc1, enc2, enc1_prev, enc2_prev, t_i, pos, angle_prev
     path = path_generation()
-    angle_prev = math.atan2(path[1][0], path[1][1])
+    angle_prev = math.pi/2
     #print(path)
     
     wheels = [0.0, 0.0]
-    dt = 0.005
-
-    while(pos[0] < 36.0):
+    #dt = 0.005
+    close = 0
+    while(close < len(path)-1):
         look = lookahead(path)
         close = closest(path)
         curv = curvature(look, path) if t_i > close else 0.00001
         vel = path[close][2]
         last_wheels = wheels
         wheels = turn(curv, vel)
-        print(pos)
 
         for i, w in enumerate(wheels):
-            wheels[i] = last_wheels[i] + min(float(MAX_VEL_CHANGE) * dt, max(-float(MAX_VEL_CHANGE) * dt, w - last_wheels[i]))
+            wheels[i] = last_wheels[i] + min(float(MAX_VEL_CHANGE), max(-float(MAX_VEL_CHANGE), w - last_wheels[i]))
         
         roboclaw.SpeedM1(address, int(wheels[0] * TICKS_PER_INCH))
         roboclaw.SpeedM2(address, int(wheels[1] * TICKS_PER_INCH))
-    
-        #enc1_prev = enc1
-        #enc2_prev = enc2
-        #enc1 = get_encoder_data(1)[1] #Left Wheel
-        #enc2 = get_encoder_data(2)[1]
-        #left_enc_change = enc1 - enc1_prev #Change 0 to previously stored encoder data
-        #right_enc_change = enc2 - enc2_prev
-        #right_inches = right_enc_change / TICKS_PER_INCH
-        #left_inches = left_enc_change/ TICKS_PER_INCH
-        #pos = (pos[0] + (right_inches+ left_inches)/2 * math.sin(angle_prev), pos[1] + (right_inches + left_inches)/2 * math.cos(angle_prev))
-        #angle_prev += math.atan((wheels[0] - wheels[1])/ROBOT_WIDTH * dt)
-        #get_global_coord()
 
-        pos = (pos[0] + (wheels[0]+wheels[1])/2*dt * math.sin(angle_prev), pos[1] + (wheels[0]+wheels[1])/2*dt * math.cos(angle_prev))
-        angle_prev += math.atan((wheels[0]-wheels[1])/ROBOT_WIDTH*dt)
+        get_global_coord()
 
     stop()
     roboclaw.SetEncM1(address, 0)
     roboclaw.SetEncM2(address, 0)
-    pos= [0.0, 0.0]
-
 
 #MAIN LOOP---------------------------------------------
 
@@ -336,3 +323,14 @@ while(True):
         speed_test()
     elif(words[0] == "path"):
         path_generation()
+
+#enc1_prev = enc1
+        #enc2_prev = enc2
+        #enc1 = get_encoder_data(1)[1] #Left Wheel
+        #enc2 = get_encoder_data(2)[1]
+        #left_enc_change = enc1 - enc1_prev #Change 0 to previously stored encoder data
+        #right_enc_change = enc2 - enc2_prev
+        #right_inches = right_enc_change / TICKS_PER_INCH
+        #left_inches = left_enc_change/ TICKS_PER_INCH
+        #pos = (pos[0] + (right_inches+ left_inches)/2 * math.sin(angle_prev), pos[1] + (right_inches + left_inches)/2 * math.cos(angle_prev))
+        #angle_prev += math.atan((wheels[0] - wheels[1])/ROBOT_WIDTH * dt)
