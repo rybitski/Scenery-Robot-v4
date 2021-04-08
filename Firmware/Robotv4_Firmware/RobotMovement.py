@@ -87,8 +87,8 @@ def path_generation():
     global MAX_VEL, START_VEL, TURN_CONST, MAX_ACCEL
     #PART 1: CALCULATE INITIAL SET OF POINTS FOR PATH
     # Set control points
-    ctr = np.array( [[0, 0], [12, 6], [24,-6], [36,0]])
-    
+    #ctr = np.array( [[0, 0], [5, -5], [10,0], [15, 5], [20, 0], [15, -5], [10, 0], [5,5], [0,0]])
+    ctr = np.array( [[0, 0], [12, 6], [24,-6], [36, 0]])
     x=ctr[:,0]
     y=ctr[:,1]
 
@@ -100,6 +100,10 @@ def path_generation():
 
     for i in range(len(out[0])):
         path.append([out[0][i], out[1][i]])
+    
+    for i, w in enumerate(path):
+        if w[0] == path[i-1][0]:
+            w[0] += 0.00001
 
     #PART 2: CALCULATE PATH DISTANCE FOR EACH POINT 
     path[0].append(0)
@@ -114,6 +118,7 @@ def path_generation():
         w[1] += 0.0001
         k1 = .5*(w[0]**2 + w[1]**2 - path[i-1][0]**2 - path[i-1][1]**2) / (w[0] - path[i-1][0])
         k2 = (w[1] - path[i-1][1]) / (w[0] - path[i-1][0])
+        #print(str(w[0]) + ", " + str(path[i-1][0]))
         b = .5*(path[i-1][0]**2 - 2*path[i-1][0]*k1 + path[i-1][1]**2 - path[i+1][0]**2 + 2*path[i+1][0]*k1 - path[i+1][1]**2) / (path[i+1][0]*k2 - path[i+1][1] + path[i-1][1] - path[i-1][0]*k2)
         a = k1 - k2*b
         r = math.sqrt((w[0]-a)**2 + (w[1]-b)**2)
@@ -188,20 +193,24 @@ def get_global_coord():
 #PURE PURSUIT FUNCTIONS----------------------------------------------------------
 
 #Finds the closest coordinate in the path
-def closest(path):
+def closest(path, index):
     global pos
     mindist = (0, math.sqrt((path[0][0] - pos[0]) ** 2 + (path[0][1] - pos[1]) ** 2))
 
-    for i, p in enumerate(path):
+    path_section = path[index: index + 15]
+    print(index +15)
+
+    for i, p in enumerate(path_section):
         dist = math.sqrt((p[0]-pos[0])**2 + (p[1]-pos[1])**2)
         if dist < mindist[1]:
             mindist = (i, dist)
     return mindist[0]
 
 #Code taken from https://github.com/arimb/PurePursuit/blob/master/RobotSimulator.py
-def lookahead(path):
+def lookahead(path, index):
     global t, t_i, LOOKAHEAD_DISTANCE, pos
-    for i, p in enumerate(reversed(path[:-1])):
+    path_section = path[index: index + 15]
+    for i, p in enumerate(reversed(path_section[:-1])):
         i_ = len(path) -2 -i
         d = (path[i_+1][0]-p[0], path[i_+1][1]-p[1])
         f = (p[0]-pos[0], p[1]-pos[1])
@@ -224,7 +233,7 @@ def lookahead(path):
                 return p[0]+t*d[0], p[1]+t*d[1]
     t = 0
     t_i = 0
-    return path[closest(path)][0:2]
+    return path[closest(path, index)][0:2]
 
 #Code taken from https://github.com/arimb/PurePursuit/blob/master/RobotSimulator.py
 def curvature(lookahead, path):
@@ -267,9 +276,11 @@ def test_follow():
     wheels = [0.0, 0.0]
     #dt = 0.005
     close = 0
+    starting_index = 1
     while(close < len(path)-1):
-        look = lookahead(path)
-        close = closest(path)
+        look = lookahead(path, starting_index)
+        close = closest(path, starting_index)
+        starting_index = close
         curv = curvature(look, path) if t_i > close else 0.00001
         vel = path[close][2]
         last_wheels = wheels
