@@ -87,8 +87,8 @@ def path_generation():
     global MAX_VEL, START_VEL, TURN_CONST, MAX_ACCEL
     #PART 1: CALCULATE INITIAL SET OF POINTS FOR PATH
     # Set control points
-    #ctr = np.array( [[0, 0], [5, -5], [10,0], [15, 5], [20, 0], [15, -5], [10, 0], [5,5], [0,0]])
-    ctr = np.array( [[0, 0], [12, 6], [24,-6], [36, 0]])
+    ctr = np.array( [[0, 0], [5, -5], [10,0], [15, 5], [20, 0], [15, -5], [10, 0], [5,5], [0,0]])
+    #ctr = np.array( [[0, 0], [12, 6], [24,-6], [36, 0]])
     x=ctr[:,0]
     y=ctr[:,1]
 
@@ -191,52 +191,50 @@ def get_global_coord():
     return pos
 
 #PURE PURSUIT FUNCTIONS----------------------------------------------------------
-
-#Finds the closest coordinate in the path
-def closest(path, index):
+    
+def closest(path):
     global pos
     mindist = (0, math.sqrt((path[0][0] - pos[0]) ** 2 + (path[0][1] - pos[1]) ** 2))
 
-    path_section = path[index: index + 15]
-    print(index +15)
-
-    for i, p in enumerate(path_section):
+    for i, p in enumerate(path):
         dist = math.sqrt((p[0]-pos[0])**2 + (p[1]-pos[1])**2)
         if dist < mindist[1]:
             mindist = (i, dist)
     return mindist[0]
 
-#Code taken from https://github.com/arimb/PurePursuit/blob/master/RobotSimulator.py
-def lookahead(path, index):
+def lookahead(path):
     global t, t_i, LOOKAHEAD_DISTANCE, pos
-    path_section = path[index: index + 15]
-    for i, p in enumerate(reversed(path_section[:-1])):
+    for i, p in enumerate(reversed(path[:-1])):
         i_ = len(path) -2 -i
         d = (path[i_+1][0]-p[0], path[i_+1][1]-p[1])
         f = (p[0]-pos[0], p[1]-pos[1])
 
         a = sum(j**2 for j in d)
         b = 2*sum(j*k for j,k in zip(d,f))
-        c = sum(j**2 for j in f) - LOOKAHEAD_DISTANCE**2
+        c = sum(j**2 for j in f) - float(LOOKAHEAD_DISTANCE**2)
         disc = b**2 - 4*a*c
         if disc >= 0:
             disc = math.sqrt(disc)
             t1 = (-b + disc)/(2*a)
             t2 = (-b - disc)/(2*a)
             if 0<=t1<=1:
-                t = t1
-                t_i = i_
-                return p[0]+t*d[0], p[1]+t*d[1]
+                if((i_ - t_i) < 3):
+                    t = t1
+                    t_i = i_
+                    #print(i_)
+                    return p[0]+t*d[0], p[1]+t*d[1]
             if 0<=t2<=1:
-                t = t2
-                t_i = i_
-                return p[0]+t*d[0], p[1]+t*d[1]
+                if((i_ - t_i) < 3):
+                    t = t2
+                    t_i = i_
+                    #print(i_)
+                    return p[0]+t*d[0], p[1]+t*d[1]
     t = 0
     t_i = 0
-    return path[closest(path, index)][0:2]
+    return path[closest(path)][0:2]
 
 #Code taken from https://github.com/arimb/PurePursuit/blob/master/RobotSimulator.py
-def curvature(lookahead, path):
+def curvature(lookahead):
     global angle_prev, pos
     side = np.sign(math.sin( angle_prev)*(lookahead[0]-pos[0]) - math.cos(angle_prev)*(lookahead[1]-pos[1]))
     a = -math.tan(angle_prev)
@@ -271,18 +269,25 @@ def test_follow():
     global enc1, enc2, enc1_prev, enc2_prev, t_i, pos, angle_prev
     path = path_generation()
     angle_prev = math.pi/2
-    #print(path)
     
     wheels = [0.0, 0.0]
-    #dt = 0.005
     close = 0
-    starting_index = 1
-    while(close < len(path)-1):
-        look = lookahead(path, starting_index)
-        close = closest(path, starting_index)
-        starting_index = close
-        curv = curvature(look, path) if t_i > close else 0.00001
-        vel = path[close][2]
+    global_close = 0
+    count = 0
+    while(global_close < len(path)-1 or count < 5):
+        if (close+10 > len(path)):
+            cut_path = path[close: len(path)]
+        else:
+            cut_path = path[close: close + 10]
+        close = closest(cut_path)
+        global_close = closest(path)
+
+        print(pos)
+
+        look = lookahead(path)
+        curv = curvature(look) if t_i > global_close else 0.00001
+        vel = cut_path[close][2]
+
         last_wheels = wheels
         wheels = turn(curv, vel)
 
@@ -293,7 +298,9 @@ def test_follow():
         roboclaw.SpeedM2(address, int(wheels[1] * TICKS_PER_INCH))
 
         get_global_coord()
+        count += 1
 
+    print(cut_path)
     stop()
     roboclaw.SetEncM1(address, 0)
     roboclaw.SetEncM2(address, 0)
@@ -334,14 +341,3 @@ while(True):
         speed_test()
     elif(words[0] == "path"):
         path_generation()
-
-#enc1_prev = enc1
-        #enc2_prev = enc2
-        #enc1 = get_encoder_data(1)[1] #Left Wheel
-        #enc2 = get_encoder_data(2)[1]
-        #left_enc_change = enc1 - enc1_prev #Change 0 to previously stored encoder data
-        #right_enc_change = enc2 - enc2_prev
-        #right_inches = right_enc_change / TICKS_PER_INCH
-        #left_inches = left_enc_change/ TICKS_PER_INCH
-        #pos = (pos[0] + (right_inches+ left_inches)/2 * math.sin(angle_prev), pos[1] + (right_inches + left_inches)/2 * math.cos(angle_prev))
-        #angle_prev += math.atan((wheels[0] - wheels[1])/ROBOT_WIDTH * dt)
