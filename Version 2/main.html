@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js" integrity="sha512-wBcFatf7yQavHQWtf4ZEjvtVz4XkYISO96hzvejfh18tn3OrJ3sPBppH0B6q/1SHB4OKHaNNUKqOmsiTGlOM/g==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!--  This is the css for the index.html page-->
+    <link rel="stylesheet" href="/CSS/styles.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="headerContainer">
+      <!--          This is the navbar        -->
+      <div class="navbar">
+        <div class="logo">
+          Scenery Robot
+        </div>
+        <div class="navlinks">
+          <ul>
+            <li><a href="">Github</a></li>
+            <li><a href="">Wiki</a></li>
+            <li><a href="">Tutorial</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!--          This container holds the canvas and the right input and output container        -->
+      <div class="innerContainer" id = "innerCont">
+        <!--          These are the canvases       -->
+        <div class = "leftContainer" id = "leftCont"> 
+          <canvas
+          id="gridCanvas"
+          class="backgroundCanvas"> <!-- This canvas stores grid lines-->
+        </canvas>
+        <canvas
+          id="drawingCanvas"
+          class="topCanvas"><!-- This canvas stores user drawn lines-->
+        </canvas>
+        <canvas 
+          id="pointsCanvas"
+          class="pointsCanvas"> <!-- This canvas is used to display the extracted points-->
+        </canvas>
+        <div class ="xAxis" id = "xAxis">(0, 0)</div>
+        <div class="popup" onclick = "newTrack()">New Track </div>
+        <span class="popuptext" id="myPopup">Invalid Stage Dimensions</span>
+        <span class="pointsPopup" id="pointsPopup">Points Are On</span>
+        <!--   <span class="popuptext" id="myPopup">Fix the Dimensions </span> -->
+        <div class = "stageDimensions" id = "displayDim">
+          Width:
+          <br>
+          Length:
+        </div>
+        </div>
+
+        <!--          This is the right side input and output contianer       -->
+        <div class="rightContainer">
+
+          <!--          This is the top input area of the right contianer        -->
+          <div class="inputArea">
+            <div class = "innerTop">
+              <div class = "formDiv">
+                <form>
+                  <label for="width">Width of Stage:</label>
+                  <div class = "measurements">
+                    <input id = "stageWidth" type="text" value="" />
+                    <span class="field__helper">feet</span>
+                    <select class="inches" id="inchesWidth">
+                      <option value="0">0 in</option>
+                      <option value="1">1 in</option>
+                      <option value="2">2 in</option>
+                      <option value="3">3 in</option>
+                      <option value="4">4 in</option>
+                      <option value="5">5 in</option>
+                      <option value="6">6 in</option>
+                      <option value="7">7 in</option>
+                      <option value="8">8 in</option>
+                      <option value="8">9 in</option>
+                      <option value="10">10 in</option>
+                      <option value="11">11 in</option>
+                    </select>
+                  </div>
+                  <label for="length">Length of Stage:</label>
+                  <div class = "measurements">
+                    <input id = "stageHeight" type="text" value="" />
+                    <span class="field__helper">feet</span>
+                    <select class="inches" id="inchesHeight">
+                      <option value="0">0 in</option>
+                      <option value="1">1 in</option>
+                      <option value="2">2 in</option>
+                      <option value="3">3 in</option>
+                      <option value="4">4 in</option>
+                      <option value="5">5 in</option>
+                      <option value="6">6 in</option>
+                      <option value="7">7 in</option>
+                      <option value="8">8 in</option>
+                      <option value="8">9 in</option>
+                      <option value="10">10 in</option>
+                      <option value="11">11 in</option>
+                    </select>
+                  </div>
+                </form>
+              </div>
+              <div class= "gridIntervals">
+                <h5>Display Grid Intervals Every:</h5>
+                <select class="frequency" id="frequency">
+                  <option value=".5">1/2</option>
+                  <option value=".33">1/3</option>
+                  <option value=".25">1/4</option>
+                  <option value=".2">1/5</option>
+                  <option value=".166">1/6</option>
+                  <option value=".142">1/7</option>
+                  <option value=".125">1/8</option>
+                </select>
+              </div>
+            </div>
+            <h5>Number of Points to Extract (Every X Secs)</h5>
+            <div class="slidecontainer">
+              <input
+                type="range"
+                min=".01"
+                max="1"
+                step=".01"
+                value=".05"
+                class="sldr"
+                id="myRange"
+              ></input >
+              <p id = "demo" class="sliderOutput"></p>
+            </div>
+            <div class = "toggleAndButtons">
+              <label class="switch">
+                <input onclick="myFunction()" type="checkbox">
+                <span class="slider"></span>
+              </label>
+              <button type="clearButton" onclick = "reloadPage()"> Reset </button>
+              <button onclick = "displayPoints()" type="getPoints">Get Points</button>
+            </div>
+          </div>
+
+          <!--          This is the  bottom output container      -->
+          <div class = "ouputContainer">
+            <div class = "xAndYCoordinates" id = "xAndYCoordinates"> </div>
+            <div class = controls> 
+              <div class = "buttonInnerContainer">
+                <button onclick = "drawCoordinates()"> Draw Points</button>
+                <button id = "undoButton"> Undo Drawing</button>
+                <button id = "deleteInBetween" onclick = "eraseFunction()"> Erase</button>
+                <button>Send to Robot</button>
+              </div>
+              <div class = "buttonInnerContainer">
+                <button id = "copyButton" onclick="copyPointsFunction()"> Copy Points to Clipboard</button>
+                <button id = "saveButton"> Save Workspace</button>
+                <button onclick="document.getElementById('docpicker').click();">Upload Workspace</button>
+                <input style="display: none;" type="file" id="docpicker" accept=".csv,application/vnd.ms-excel,.xlt,application/vnd.ms-excel,.xla,application/vnd.ms-excel,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xltx,application/vnd.openxmlformats-officedocument.spreadsheetml.template,.xlsm,application/vnd.ms-excel.sheet.macroEnabled.12,.xltm,application/vnd.ms-excel.template.macroEnabled.12,.xlam,application/vnd.ms-excel.addin.macroEnabled.12,.xlsb,application/vnd.ms-excel.sheet.binary.macroEnabled.12"/>
+
+                <button>Upload Ground Map</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+<script src = "/Script/main.js"></script>
