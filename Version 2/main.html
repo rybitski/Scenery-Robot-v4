@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js" integrity="sha512-wBcFatf7yQavHQWtf4ZEjvtVz4XkYISO96hzvejfh18tn3OrJ3sPBppH0B6q/1SHB4OKHaNNUKqOmsiTGlOM/g==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <!--  This is the css for the index.html page-->
-    <link rel="stylesheet" href="/CSS/styles.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
     <title>Document</title>
   </head>
   <body>
@@ -147,14 +147,13 @@
                 <button onclick = "drawCoordinates()"> Draw Points</button>
                 <button id = "undoButton"> Undo Drawing</button>
                 <button id = "deleteInBetween" onclick = "eraseFunction()"> Erase</button>
-                <button>Send to Robot</button>
               </div>
               <div class = "buttonInnerContainer">
                 <button id = "copyButton" onclick="copyPointsFunction()"> Copy Points to Clipboard</button>
                 <button id = "saveButton"> Save Workspace</button>
                 <button onclick="document.getElementById('docpicker').click();">Upload Workspace</button>
                 <input style="display: none;" type="file" id="docpicker" accept=".csv,application/vnd.ms-excel,.xlt,application/vnd.ms-excel,.xla,application/vnd.ms-excel,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xltx,application/vnd.openxmlformats-officedocument.spreadsheetml.template,.xlsm,application/vnd.ms-excel.sheet.macroEnabled.12,.xltm,application/vnd.ms-excel.template.macroEnabled.12,.xlam,application/vnd.ms-excel.addin.macroEnabled.12,.xlsb,application/vnd.ms-excel.sheet.binary.macroEnabled.12"/>
-
+                <button id = "sendPath" onclick="sendPath()">Send Path To Robot</button>
                 <button>Upload Ground Map</button>
               </div>
             </div>
@@ -164,4 +163,4 @@
     </div>
   </body>
 </html>
-<script src = "/Script/main.js"></script>
+<script src = "main.js"></script>
