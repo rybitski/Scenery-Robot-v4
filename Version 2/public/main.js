@@ -1065,8 +1065,8 @@ function processExcel(data) {
   drawLinesFromHistory();
 }
 
-function sendPath(){
-  var data = []
+function sendPath() {
+  var data = [];
   var rect = document.getElementById("drawingCanvas").getBoundingClientRect();
   for (var i = 0; i < criticalPointsList.length; i++) {
     var tempx = criticalPointsList[i].x;
@@ -1075,9 +1075,9 @@ function sendPath(){
     var realY = (stageHeight - (tempy / rect.height) * stageHeight).toFixed(2);
     data.push([realX, realY]);
   }
-  console.log(data)
+  console.log(data);
   var xhr = new XMLHttpRequest();
-  var url = "http://localhost:3000/test";
+  var url = "http://localhost:3000/input";
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-Type", "application/json");
   /*
@@ -1088,6 +1088,6 @@ function sendPath(){
       }
   };
   */
-  var data = JSON.stringify({"path": data});
+  var data = JSON.stringify({ path: data });
   xhr.send(data);
 }
