@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 #x = np.arange(0, 2*np.pi+np.pi/4, 2*np.pi/8)
 #y = np.sin(x)
 
-ctr =np.array( [[0, 0], [12, 6], [24,-6], [36,0]])
+ctr = np.array( [[0, 0], [5, -5], [10,0], [15, 5], [20, 0], [15, -5], [10, 0], [5,5], [0,0]])
 
 x=ctr[:,0]
 y=ctr[:,1]
