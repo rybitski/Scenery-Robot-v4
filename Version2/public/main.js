@@ -36,29 +36,27 @@ gridHeight = gridCanvas.getBoundingClientRect().height;
 
 function displayGrid() {
   clearGrid();
-  drawBoard();
-  displayGridIntervals();
+  var intervalRate = displayGridIntervals();
+  drawBoard(intervalRate);
 }
 
-var p = 0;
-function drawBoard() {
+var p = 0; //can add a shift in the grid, used in drawBoard()
+function drawBoard(intervalRate) {
   //Prints all the vertical lines of the grid
-  for (
-    var x = 0;
-    x <= gridWidth;
-    x += gridCanvas.getBoundingClientRect().width / 40
-  ) {
+  console.log(intervalRate);
+  var rect = gridCanvas.getBoundingClientRect();
+
+  for (var x = 0; x <= gridWidth; ) {
     ctx.moveTo(x + p, p);
     ctx.lineTo(x + p, gridHeight + p);
+    x += parseFloat(intervalRate / 2);
   }
   //Prints all the horizontal lines of the grid
-  for (
-    var x = 0;
-    x <= gridHeight;
-    x += gridCanvas.getBoundingClientRect().height / 24
-  ) {
+
+  for (var x = 0; x <= gridHeight; ) {
     ctx.moveTo(p, x + p);
     ctx.lineTo(gridWidth + p, x + p);
+    x += parseFloat(intervalRate / 2);
   }
 
   ctx.strokeStyle = "gray";
@@ -77,13 +75,62 @@ xAxisArray = [];
 yAxisArray = [];
 function displayGridIntervals() {
   axisFrequency = document.getElementById("frequency").value;
-  xAxisArray.length = Math.floor(1 / axisFrequency) + 1;
   yAxisArray.length = Math.floor(1 / axisFrequency);
+  var intervalRate = displayYIntervals();
+  xAxisArray.length = Math.floor(
+    document.getElementById("gridCanvas").getBoundingClientRect().width /
+      intervalRate
+  );
+  displayXIntervals(intervalRate);
+  return intervalRate;
+}
 
-  var tempWidth =
-    document.getElementById("gridCanvas").getBoundingClientRect().width - 40;
+function displayYIntervals() {
+  var tempHeight = document
+    .getElementById("gridCanvas")
+    .getBoundingClientRect()
+    .height.toFixed(2);
+  var yLocation = tempHeight;
+  var yGapRate = (tempHeight / yAxisArray.length).toFixed(2);
+  console.log(tempHeight, yGapRate, yAxisArray.length);
+
+  //the pixel accuracy is within +- 5 pixels
+  for (var i = 0; i < yAxisArray.length - 1; i++) {
+    const div = document.createElement("div" + i);
+    div.id = "yCoord";
+    div.style.width = "40px";
+    div.style.height = "15px";
+    div.style.position = "absolute";
+    div.style.color = "#00adb5";
+    div.style.zIndex = "2";
+    div.style.bottom = yLocation - (i + 1) * yGapRate + "px"; //+2px for the border height
+    div.style.left += ".5%";
+    div.style.fontSize = "13px";
+    div.style.textAlign = "center";
+    div.style.borderBottom = "2px solid orange";
+
+    var pixelValue = (i + 1) * yGapRate;
+    var h1 = document.createElement("h4");
+    var feetInches = convertYPixelsToInches(pixelValue);
+    var feet = Math.floor(feetInches);
+    var inches = (feetInches % 1) * 12;
+    h1.innerHTML = feet + "'" + inches + '"';
+
+    div.append(h1);
+    yAxisArray[i] = div;
+    document.getElementById("leftCont").appendChild(yAxisArray[i]);
+  }
+  return yGapRate;
+}
+
+function displayXIntervals(intervalRate) {
+  var tempWidth = document
+    .getElementById("gridCanvas")
+    .getBoundingClientRect()
+    .width.toFixed(2);
   var xLocation = 0;
-  var xGapRate = (tempWidth / (xAxisArray.length - 1)).toFixed(0);
+  //var xGapRate = (tempWidth / (xAxisArray.length - 1)).toFixed(0);
+  var xGapRate = intervalRate;
   var rect = document.getElementById("gridCanvas").getBoundingClientRect();
   for (var i = 0; i < xAxisArray.length; i++) {
     const div = document.createElement("div" + i);
@@ -96,83 +143,53 @@ function displayGridIntervals() {
     div.style.color = "#00adb5";
     div.style.fontSize = "13px";
     div.style.textAlign = "center";
-    //div.style.border = "1px solid black";
     div.style.borderLeft = "2px solid orange";
-    if (i == 0) {
-      div.style.marginLeft = ".5%";
-    }
-    div.style.left += xLocation + i * xGapRate + "px";
+    div.style.left += xLocation + (i + 1) * xGapRate + "px";
 
-    /*
-      realX = ((tempx / rect.width) * stageWidth).toFixed(2);
-      realY =  (stageHeight-((tempy / rect.height) * stageHeight)).toFixed(2)
-      */
-    var feet =
-      ((i * xGapRate) / gridCanvas.getBoundingClientRect().width) * stageWidth;
-    var inches = (feet % 1) * 12;
-    feet = Math.floor(feet);
-    inches = Math.round(inches);
+    var pixelValue = (i + 1) * xGapRate;
     var h1 = document.createElement("h4");
+    var feetInches = convertXPixelsToInches(pixelValue);
+    var feet = Math.floor(feetInches);
+    var inches = (feetInches % 1) * 12;
     h1.innerHTML = feet + "'" + inches + '"';
+
     div.append(h1);
     xAxisArray[i] = div;
-  }
-
-  console.log("yolo", stageWidth, stageHeight);
-
-  //pixel value/ gridCanvas.getBoundingClientRect().width = temp / stageWidth
-  for (var i = 0; i < xAxisArray.length; i++) {
     document.getElementById("leftCont").appendChild(xAxisArray[i]);
   }
-
-  var tempHeight =
-    document.getElementById("gridCanvas").getBoundingClientRect().height - 20;
-  var yLocation = 0;
-  var yGapRate = (tempHeight / yAxisArray.length).toFixed(0);
-  for (var i = 0; i < yAxisArray.length; i++) {
-    const div = document.createElement("div" + i);
-    div.id = "yCoord";
-    div.style.width = "40px";
-    div.style.height = "15px";
-    div.style.position = "absolute";
-    div.style.color = "#00adb5";
-    div.style.zIndex = "2";
-    div.style.bottom = yLocation + (i + 1) * yGapRate + "px";
-    div.style.left += ".5%";
-    div.style.fontSize = "13px";
-    div.style.textAlign = "center";
-    //div.style.border = "1px solid black";
-    div.style.borderBottom = "2px solid orange";
-
-    var feet =
-      (((i + 1) * yGapRate) / gridCanvas.getBoundingClientRect().height) *
-      stageHeight;
-    var inches = (feet % 1) * 12;
-    feet = Math.floor(feet);
-    inches = Math.round(inches);
-    var h1 = document.createElement("h4");
-    h1.innerHTML = feet + "'" + inches + '"';
-    div.append(h1);
-    yAxisArray[i] = div;
-  }
-  for (var i = 0; i < yAxisArray.length; i++) {
-    document.getElementById("leftCont").appendChild(yAxisArray[i]);
-  }
 }
-
 function removeGridIntervals() {
   for (var i = 0; i < xAxisArray.length; i++) {
     var elem = document.getElementById("xCoord");
-    elem.remove();
+    if (elem != null) {
+      elem.remove();
+    }
   }
 
   for (var i = 0; i < yAxisArray.length; i++) {
     var el = document.getElementById("yCoord");
-    el.remove();
+    if (el != null) {
+      el.remove();
+    }
   }
 }
 /*                                   End Display Grid (via Toggle Button) Section                      */
+function convertYPixelsToInches(inputValInPixels) {
+  var rect = document.getElementById("drawingCanvas").getBoundingClientRect();
+  //var realY = ((inputValInPixels / rect.height) * stageHeight).toFixed(2);
+  var realY = (
+    stageHeight -
+    (inputValInPixels / rect.height) * stageHeight
+  ).toFixed(2);
+  //console.log(inputValInPixels, realY);
+  return realY;
+}
 
+function convertXPixelsToInches(inputValInPixels) {
+  var rect = document.getElementById("drawingCanvas").getBoundingClientRect();
+  realX = ((inputValInPixels / rect.height) * stageWidth).toFixed(2);
+  return realX;
+}
 /*                                           Begin Verifying Canvas Dimension Input Section                         */
 var stageWidth = 0;
 var stageHeight = 0;
@@ -227,12 +244,21 @@ function displayPoints() {
   var rect = document.getElementById("drawingCanvas").getBoundingClientRect();
   //currentXPos = (event.clientX - rect.left) / (rect.right - rect.left) * drawingCanvas.width;
   //currentYPos = (event.clientY - rect.top) / (rect.bottom - rect.top) * drawingCanvas.height;
+  /*
+  for (var i = 0; i < criticalPointsList.length; i++) {
+    console.log(criticalPointsList[i].x, criticalPointsList[i].y);
+  }
+  */
   var realX, realY;
   for (var i = 0; i < criticalPointsList.length; i++) {
     var tempx = criticalPointsList[i].x;
     var tempy = criticalPointsList[i].y;
     realX = ((tempx / rect.width) * stageWidth).toFixed(2);
-    realY = (stageHeight - (tempy / rect.height) * stageHeight).toFixed(2);
+    realX = convertXPixelsToInches(tempx);
+    //realX = convertXpxToInches)
+    //realY = (stageHeight - (tempy / rect.height) * stageHeight).toFixed(2);
+    realY = convertYPixelsToInches(tempy);
+    //realY = Math.abs(stageWidth - convertYPixelsToInches(tempy));
     if (i + 1 == criticalPointsList.length) {
       //for the last set of points, do not add the extra comma at the end
       document.getElementById("xAndYCoordinates").innerHTML +=
@@ -336,11 +362,6 @@ var numPointsSelected = 0;
 var indexEdited = 0;
 var editLocation = "none";
 var drawingLocation = "end";
-
-//make the location edited more clear for user
-//mentored study/independednt study under the drama department
-//steven warner, email: slw9b@virginia.edu
-
 var middleEditOne, middleEditTwo;
 var indexFirstPoint, indexSecondPoint;
 
