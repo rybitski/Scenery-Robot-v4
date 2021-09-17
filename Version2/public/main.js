@@ -1061,8 +1061,10 @@ function processExcel(data) {
   var excelRows = XLSX.utils.sheet_to_row_object_array(
     workbook.Sheets[firstSheet]
   );
+  var whindex = 0;
   for (var i = 0; i < excelRows.length; i++) {
     if (excelRows[i].mouseHistoryX == "XPos") {
+      whindex = i;
       i++;
       isCritPoint = true;
     }
@@ -1084,6 +1086,8 @@ function processExcel(data) {
     console.log(fullMouseHistoryPoints[i].x);
   }
   drawLinesFromHistory();
+  stageWidth=excelRows[whindex].Width;
+  stageHeight=excelRows[whindex].Height;
 }
 
 function sendPath() {
