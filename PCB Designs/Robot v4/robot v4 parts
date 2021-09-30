@@ -1,0 +1,89 @@
+Partlist
+
+Exported from Robot v4.sch at 9/4/2020 12:33 PM
+
+EAGLE Version 9.2.1 Copyright (c) 1988-2018 Autodesk, Inc.
+
+Assembly variant: 
+
+Part     Value                       Device                      Package                        Library             Sheet
+
+ADC                                  PINHD-1X4                   1X04                           pinhead             1
+C1       47 uF                       CPOL-USE2.5-5               E2,5-5                         rcl                 1
+C2       47uF                        CPOL-USE2.5-5               E2,5-5                         rcl                 1
+C3       22uF                        CPOL-USE3.5-8               E3,5-8                         rcl                 1
+C4       10uF                        CPOL-USE3.5-8               E3,5-8                         rcl                 1
+C5       0.1uF                       C-USC0805                   C0805                          adafruit            1
+C6       0.01uF                      C-USC0805                   C0805                          adafruit            1
+C7       0.1uF                       C-USC0805                   C0805                          adafruit            1
+C8       10uF                        GRT31CR61H106ME01L          CAPC3216X180N                  SamacSys_Parts      1
+C9       10uF                        GRT31CR61H106ME01L          CAPC3216X180N                  SamacSys_Parts      1
+C10      47uF                        GRM21BR61A476ME15L          CAPC2012X145N                  SamacSys_Parts      1
+C11      22uF                        CPOL-USE3.5-8               E3,5-8                         rcl                 1
+D1                                   DIODESOD-123                SOD-123                        adafruit            1
+D2                                   DIODESOD-123                SOD-123                        adafruit            1
+D3                                   DIODESOD-123                SOD-123                        adafruit            1
+DP$1     DISPLAY-OLED-128X64-I2C     DISPLAY-OLED-128X64-I2C     DISPLAY-OLED-128X64-I2C        diy-modules         1
+ESTOP    RGBLED_CA-5MM               RGBLED_CA-5MM               LED5MMRGB                      adafruit            1
+I2C                                  PINHD-1X4                   1X04                           pinhead             1
+IC1      74LVC1G08GW,125             74LVC1G08GW,125             SOT65P212X110-5N               SamacSys_Parts      1
+IC2      ADS1015IDGSR                ADS1015IDGSR                SOP50P490X110-10N              SamacSys_Parts      1
+IC3      MAX487CSA+                  MAX487CSA+                  SOIC127P600X175-8N             SamacSys_Parts      1
+IC4      TPSM53604RDAR               TPSM53604RDAR               TPSM53604RDAR                  SamacSys_Parts      1
+IC5      MCP23008-E                  MCP23008-E_SO               SOIC127P1030X265-18N           SamacSys_Parts      1
+J1       RASPBERRYPI-40-PIN-GPIO_PTH RASPBERRYPI-40-PIN-GPIO_PTH 2X20_SHROUDED                  SparkFun-Connectors 1
+J2       70246-1604                  70246-1604                  SHDR16W64P254_2X8_2794X889X947 SamacSys_Parts      1
+JP1                                  PINHD-1X2                   1X02                           pinhead             1
+JP2                                  PINHD-1X3                   1X03                           adafruit            1
+LED1     RGBLED_CA-5MM               RGBLED_CA-5MM               LED5MMRGB                      adafruit            1
+M1       ARDUINO-NANO-3.0            ARDUINO-NANO-3.0            ARDUINO-NANO-3.0               diy-modules         1
+MCP                                  PINHD-1X7                   1X07                           pinhead             1
+MD$1     REG-AMS1117-3P-3.3V#V       REG-AMS1117-3P-3.3V#V       REG-AMS1117-3P#V               diy-modules         1
+MD$2     E01-ML01DP5                 E01-ML01DP5                 E01-ML01DP5                    MyLibrary           1
+PS1      P78E05-1000                 P78E05-1000                 CONV_P78E05-1000               P78E05-1000         1
+Q1       NVD5C668NLT4G               NVD5C668NLT4G               DPAK_(SINGLE-GAUGE)_TO-252(369 SamacSys_Parts      1
+Q2       NVD5C668NLT4G               NVD5C668NLT4G               DPAK_(SINGLE-GAUGE)_TO-252(369 SamacSys_Parts      1
+Q3       BSS138                      MOSFET-NREFLOW              SOT23                          adafruit            1
+Q4       BSS138                      MOSFET-NREFLOW              SOT23                          adafruit            1
+Q5       BSS138                      MOSFET-NREFLOW              SOT23                          adafruit            1
+R1       200                         R-US_M0805                  M0805                          adafruit            1
+R2       200                         R-US_M0805                  M0805                          adafruit            1
+R3       200                         R-US_M0805                  M0805                          adafruit            1
+R4       10k                         R-US_M0805                  M0805                          adafruit            1
+R5       10k                         R-US_M0805                  M0805                          adafruit            1
+R6       3296W-1-103LF               3296W-1-103LF               SHDR3W54P0X254_1X3_953X483X115 3296W-1-103LF       1
+R7       10K                         R-US_M0805                  M0805                          adafruit            1
+R8       22.6K                       R-US_M0805                  M0805                          adafruit            1
+R9       47.5K                       R-US_M0805                  M0805                          adafruit            1
+R10      100                         R-US_M0805                  M0805                          adafruit            1
+R11      100                         R-US_M0805                  M0805                          adafruit            1
+R12      10K                         R-US_M0805                  M0805                          adafruit            1
+R13      2.2K                        R-US_M0805                  M0805                          adafruit            1
+R14      10K                         R-US_R0805                  R0805                          adafruit            1
+R15      10K                         R-US_R0805                  R0805                          adafruit            1
+R16      10K                         R-US_R0805                  R0805                          adafruit            1
+R17      10K                         R-US_R0805                  R0805                          adafruit            1
+R18      120                         R-US_R0805                  R0805                          adafruit            1
+R19      100K                        R-US_R0805                  R0805                          adafruit            1
+R20      5.23K                       R-US_R0805                  R0805                          adafruit            1
+R21      10K                         R-US_R0805                  R0805                          adafruit            1
+R22      2.49K                       R-US_R0805                  R0805                          adafruit            1
+R23      100K                        R-US_R0805                  R0805                          adafruit            1
+R24      10K                         R-US_R0805                  R0805                          adafruit            1
+R25      10K                         R-US_R0805                  R0805                          adafruit            1
+R26      10K                         R-US_R0805                  R0805                          adafruit            1
+R27      10K                         R-US_R0805                  R0805                          adafruit            1
+R28      10K                         R-US_R0805                  R0805                          adafruit            1
+R29      10K                         R-US_R0805                  R0805                          adafruit            1
+R30      200                         R-US_M0805                  M0805                          adafruit            1
+R31      200                         R-US_M0805                  M0805                          adafruit            1
+R32      200                         R-US_M0805                  M0805                          adafruit            1
+R33      10K                         R-US_R0805                  R0805                          adafruit            1
+SPI                                  PINHD-1X7                   1X07                           pinhead             1
+U2       1A FUSE                     3568                        3568                           SamacSys_Parts      1
+U3       DRV103H                     DRV103H                     DDA8                           MyLibrary           1
+U4       5A FUSE                     3568                        3568                           SamacSys_Parts      1
+X1                                   W237-136                    W237-136                       con-wago-500        1
+X2                                   W237-136                    W237-136                       con-wago-500        1
+X3                                   W237-136                    W237-136                       con-wago-500        1
+X4       GLX-S-88M                   GLX-S-88M                   GLX-S-88M                      con-kycon           1

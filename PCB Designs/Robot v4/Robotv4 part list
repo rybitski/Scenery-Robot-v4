@@ -1,0 +1,89 @@
+Partlist
+
+Exported from Robot v4.brd at 5/27/2020 5:21 PM
+
+EAGLE Version 9.2.1 Copyright (c) 1988-2018 Autodesk, Inc.
+
+Assembly variant: 
+
+Part     Value                       Package                        Library             Position (mil)        Orientation
+
+ADC                                  1X04                           pinhead             (2533 822)            R0
+C1       47 uF                       E2,5-5                         rcl                 (456.97638 2760.33858) R90
+C2       47uF                        E2,5-5                         rcl                 (746.97638 2760.33858) R90
+C3       22uF                        E3,5-8                         rcl                 (2976.69291 2143.85827) R0
+C4       10uF                        E3,5-8                         rcl                 (224.37008 1756.14173) R180
+C5       0.1uF                       C0805                          adafruit            (1398.77165 2050)     R180
+C6       0.01uF                      C0805                          adafruit            (4700 1900)           R0
+C7       0.1uF                       C0805                          adafruit            (4400 2000)           R0
+C8       10uF                        CAPC3216X180N                  SamacSys_Parts      (578.59055 1726.53543) R180
+C9       10uF                        CAPC3216X180N                  SamacSys_Parts      (580.16535 1900.47244) R180
+C10      47uF                        CAPC2012X145N                  SamacSys_Parts      (1024.06299 2498.11024) R0
+C11      22uF                        E3,5-8                         rcl                 (2522 2155)           R270
+D1                                   SOD-123                        adafruit            (2101 1982)           R180
+D2                                   SOD-123                        adafruit            (1342.99213 820.9685) R180
+D3                                   SOD-123                        adafruit            (1768.97638 820.9685) R180
+DP$1     DISPLAY-OLED-128X64-I2C     DISPLAY-OLED-128X64-I2C        diy-modules         (2850.62992 2988.66142) R0
+ESTOP    RGBLED_CA-5MM               LED5MMRGB                      adafruit            (182.76378 2747.85827) R0
+I2C                                  1X04                           pinhead             (2533 1122)           R0
+IC1      74LVC1G08GW,125             SOT65P212X110-5N               SamacSys_Parts      (1632 1583.81102)     R270
+IC2      ADS1015IDGSR                SOP50P490X110-10N              SamacSys_Parts      (4700 2300)           R0
+IC3      MAX487CSA+                  SOIC127P600X175-8N             SamacSys_Parts      (4048.4252 3201.69291) R0
+IC4      TPSM53604RDAR               TPSM53604RDAR                  SamacSys_Parts      (829.73228 2134.40945) R90
+IC5      MCP23008-E                  SOIC127P1030X265-18N           SamacSys_Parts      (4903.07087 3070)     R0
+J1       RASPBERRYPI-40-PIN-GPIO_PTH 2X20_SHROUDED                  SparkFun-Connectors (6039.88189 2805.51181) R0
+J2       70246-1604                  SHDR16W64P254_2X8_2794X889X947 SamacSys_Parts      (6095.82677 691.92913) R90
+JP1                                  1X02                           pinhead             (213.88976 3764.37795) R90
+JP2                                  1X03                           adafruit            (213.88976 3409.14173) R90
+LED1     RGBLED_CA-5MM               LED5MMRGB                      adafruit            (3045 934.80315)      R0
+M1       ARDUINO-NANO-3.0            ARDUINO-NANO-3.0               diy-modules         (1825.81102 3440.58268) R90
+MCP                                  1X07                           pinhead             (2683 1722)           R0
+MD$1     REG-AMS1117-3P-3.3V#V       REG-AMS1117-3P#V               diy-modules         (1098.37008 2850.55906) R0
+MD$2     E01-ML01DP5                 E01-ML01DP5                    MyLibrary           (1242.50394 2990.93701) R180
+PS1      P78E05-1000                 CONV_P78E05-1000               P78E05-1000         (325.59843 2197.83465) R90
+Q1       NVD5C668NLT4G               DPAK_(SINGLE-GAUGE)_TO-252(369 SamacSys_Parts      (1367.91339 987.87402) R90
+Q2       NVD5C668NLT4G               DPAK_(SINGLE-GAUGE)_TO-252(369 SamacSys_Parts      (1734.92126 965.82677) R90
+Q3       BSS138                      SOT23                          adafruit            (4200 3800)           R0
+Q4       BSS138                      SOT23                          adafruit            (4700 3800)           R0
+Q5       BSS138                      SOT23                          adafruit            (5100 3800)           R0
+R1       200                         M0805                          adafruit            (385 3831)            R0
+R2       200                         M0805                          adafruit            (385 3691.25)         R0
+R3       200                         M0805                          adafruit            (385 3551.5)          R0
+R4       10k                         M0805                          adafruit            (385 3411.75)         R0
+R5       10k                         M0805                          adafruit            (385 3272)            R0
+R6       3296W-1-103LF               SHDR3W54P0X254_1X3_953X483X115 3296W-1-103LF       (182.06299 3082.09449) R180
+R7       10K                         M0805                          adafruit            (2100 2200)           R0
+R8       22.6K                       M0805                          adafruit            (1398.77165 2200)     R0
+R9       47.5K                       M0805                          adafruit            (1398.77165 1900)     R180
+R10      100                         M0805                          adafruit            (1458 1585)           R90
+R11      100                         M0805                          adafruit            (1826 1585)           R90
+R12      10K                         M0805                          adafruit            (4500 1800)           R180
+R13      2.2K                        M0805                          adafruit            (4700 1800)           R180
+R14      10K                         R0805                          adafruit            (5000 2400)           R0
+R15      10K                         R0805                          adafruit            (5000 2200)           R0
+R16      10K                         R0805                          adafruit            (4400 2200)           R180
+R17      10K                         R0805                          adafruit            (4400 2400)           R0
+R18      120                         R0805                          adafruit            (4444.56693 3211.73228) R270
+R19      100K                        R0805                          adafruit            (852.52756 1900.59055) R0
+R20      5.23K                       R0805                          adafruit            (1017.6063 1901.25984) R180
+R21      10K                         R0805                          adafruit            (864.25984 2500.07874) R180
+R22      2.49K                       R0805                          adafruit            (1200.29134 2498.86614) R180
+R23      100K                        R0805                          adafruit            (1208.25197 1902.14173) R0
+R24      10K                         R0805                          adafruit            (4200 3500)           R180
+R25      10K                         R0805                          adafruit            (4200 4100)           R90
+R26      10K                         R0805                          adafruit            (4700 3500)           R0
+R27      10K                         R0805                          adafruit            (4700 4100)           R270
+R28      10K                         R0805                          adafruit            (5100 3500)           R0
+R29      10K                         R0805                          adafruit            (5100 4100)           R270
+R30      200                         M0805                          adafruit            (5300 3000)           R0
+R31      200                         M0805                          adafruit            (5300 2800)           R0
+R32      200                         M0805                          adafruit            (5300 2600)           R0
+R33      10K                         R0805                          adafruit            (5300 2200)           R180
+SPI                                  1X07                           pinhead             (2683 1422)           R0
+U2       1A FUSE                     3568                           SamacSys_Parts      (382.68504 1310.51181) R270
+U3       DRV103H                     DDA8                           MyLibrary           (1755.23622 2062.87402) R0
+U4       5A FUSE                     3568                           SamacSys_Parts      (796.4252 1310.51181) R270
+X1                                   W237-136                       con-wago-500        (946.77165 228.6378)  R0
+X2                                   W237-136                       con-wago-500        (2140.90551 228.6378) R0
+X3                                   W237-136                       con-wago-500        (4065.67717 228.6378) R0
+X4       GLX-S-88M                   GLX-S-88M                      con-kycon           (5236.61417 278.22835) R180
