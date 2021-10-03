@@ -649,6 +649,10 @@ function MyRect(x, y, w, h) {
     );
   };
 }
+//sebastian h
+//professor upsorn - wb dev turning it into a cs independing study
+//mark sherriff - web dev
+// daniel gram - web dev turning it into a cs independent study
 
 function myPoint(x, y) {
   this.x = x;
