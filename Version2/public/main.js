@@ -1,11 +1,11 @@
 /*                                  Begin Seconds Range Slider Section                              */
-var slider = document.getElementById("myRange");
-var output = document.getElementById("demo");
-output.innerHTML = slider.value + " sec";
+// var slider = document.getElementById("myRange");
+// var output = document.getElementById("demo");
+// output.innerHTML = slider.value + " sec";
 
-slider.oninput = function () {
-  output.innerHTML = this.value + " sec";
-};
+// slider.oninput = function () {
+//   output.innerHTML = this.value + " sec";
+// };
 /*                                  End Seconds Range Slider Section                              */
 
 /*                                   Begin Display Grid (via Toggle Button) Section                      */
@@ -216,7 +216,7 @@ function parseDimensions(width=undefined,height=undefined){
   stageWidth = stageWidth.toFixed(2);
   stageHeight = stageHeight.toFixed(2);
   //console.log(stageWidth, stageHeight);
-  interval = document.getElementById("myRange").value * 1000; // this will turn the seconds into milliseconds
+  interval = .01; // this will turn the seconds into milliseconds
   return [stageHeight,stageWidth]
 }
 //change from length to depth*****
