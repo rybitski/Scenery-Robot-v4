@@ -1,0 +1,760 @@
+:root {
+  --accentColor: #f05627;
+  --gray1: #eeeeee;
+  --gray2: #393e46;
+  --gray3: #222831;
+  --sidebar: #212121;
+  --sidebarAccent: #e5e5e5;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+body {
+  overflow: hidden;
+  background-color: white;
+}
+
+.headerContainer {
+  height: 100vh;
+  width: 100%;
+  background-color: var(--accentColor);
+  display: flex;
+  flex-direction: column;
+}
+
+/*-------------------Begin Nav Bar Stuff----------------------*/
+.navbar {
+  display: flex;
+  height: 33px;
+  width: 100%;
+  background-color: black;
+  padding: 0.5%;
+
+  position: relative;
+}
+
+.logo {
+  background-color: black;
+  float: left;
+  width: auto;
+  height: auto;
+  color: white;
+  font-size: 25px;
+  text-align: center;
+  font-weight: 700;
+  margin-left: 1%;
+}
+
+.logo:hover {
+  color: var(--accentColor);
+  cursor: pointer;
+}
+
+.navlinks {
+  float: right;
+  position: absolute;
+  width: 40%;
+  height: 30px;
+  right: 1.5%;
+  padding-right: 2%;
+}
+
+.navlinks ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.navlinks li {
+  float: right;
+}
+
+.navlinks li a {
+  background-color: black;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 5px 16px;
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.navlinks li a:hover {
+  color: var(--accentColor);
+  cursor: pointer;
+}
+
+/*-------------------End Nav Bar Stuff----------------------*/
+
+
+
+/*--------------------begin canvas drawing stuff--------------*/
+.innerContainer {
+  width: auto;
+  height: 100%;
+  /*#696969*/
+  /* background-color: var(--accentColor); */
+  background-color: #FF9933;
+  position: relative;
+  display: flex;
+}
+
+.leftContainer {
+  display: flex;
+  width: -webkit-calc(100% - 40px);
+  height: auto;
+  background-color: white;
+  float: left;
+  position: relative;
+  margin: 0px;
+}
+
+.leftContainer .popup {
+  width: 100px;
+  height: 25px;
+  position: absolute;
+  top: 2%;
+  right: 1%;
+  cursor: pointer;
+  text-align: center;
+  z-index: 10;
+  line-height: 25px;
+  background-color: white;
+  border: 1px solid black;
+}
+
+/* The actual popup */
+.popuptext,
+.pointsPopup {
+  visibility: hidden;
+  width: 200px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 100;
+}
+
+.xAxis {
+  position: absolute;
+  visibility: hidden;
+  width: 50px;
+  height: 20px;
+  background-color: red;
+  text-align: center;
+  z-index: 100;
+  bottom: 1%;
+  left: 0.5%;
+}
+
+.popuptext {
+  top: 1%;
+  right: 13%;
+}
+
+.pointsPopup {
+  right: 1%;
+  bottom: 1%;
+  opacity: 0.7;
+}
+
+.show {
+  visibility: visible;
+  animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.backgroundCanvas,/*Dipslay Grid canvas*/
+.topCanvas,/*Drawing canvas*/
+.pointsCanvas, /*critical Points canvas*/
+.gpCanvas, /*ground plan canvas*/
+.bsCanvas, /*BSpline canvas*/
+.darkthemeCanvas { /*the dark theme canvas is used to set the background color black*/ 
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+}
+
+.darkthemeCanvas{
+  visibility: visible;
+  background-color: #121212;
+  z-index: 1;
+}
+.backgroundCanvas {
+  /* background-color: white; */
+  z-index: 2;
+}
+
+.gpCanvas{ /*ground plan canvas*/
+  background-color: rgba(106, 18, 18, 0.21);
+  z-index: 3;
+  opacity: 1;
+}
+
+.bsCanvas{ /*b spline canvas*/
+  /* background-color: rgba(20, 49, 8, 0.32); */
+  z-index: 4;
+}
+.topCanvas { /*drawing canvas*/
+  z-index: 5;
+  visibility: visible;
+  /* background-color: rgba(18,18,18, .8); */
+}
+.pointsCanvas { /*show critical points canvas*/
+  visibility: hidden;
+  z-index: 10;
+}
+
+/*--------------------------End canvas drawing stuff-------*/
+
+/*-------------begin side navbar-------------------*/
+.hoverSideNavbar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  right: 0;
+  top: 0;
+  width: 40px;
+  float: right;
+  height: 100%;
+  background-color: var(--sidebar);
+  z-index: 90;
+  display: flex;
+}
+
+.iconsContainer {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: 40px;
+  height: 100%;
+  background-color: var(--sidebar);
+  z-index: 90;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  visibility: visible;
+}
+
+.hoverSideNavbar .fa,
+.hoverSideNavbar .iconify {
+  margin: 8px;
+}
+
+.hoverSideNavbar .fa:hover,
+.hoverSideNavbar .iconify:hover {
+  cursor: pointer;
+  color: var(--accentColor) !important;
+}
+
+.sideBarDetails {
+  position: absolute;
+  width: 300px;
+  height: 100%;
+  top: 0;
+  right: 0;
+  left: 40px;
+  z-index: 80;
+  background-color: var(--sidebar);
+  transition: left 0.5s ease-in;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+/*----------------------end side navbar details----------------*/
+
+/*-----------------shared settings------------*/
+.baseSetting {
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  height: 100%;
+  margin: 2%;
+  background-color: white;
+}
+
+.baseSetting h2 {
+  color: black;
+  margin: 1%;
+  margin-bottom: 5%;
+}
+
+/*---------------------------Home Section---------------*/
+.displayDimensions {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  width: auto;
+  height: auto;
+  background-color: var(--sidebarAccent);
+  padding: 1%;
+  margin: 2%;
+  border: 2px var(--gray2) solid;
+}
+
+.displayDimensions h3 {
+  padding: 1%;
+}
+
+.inputArea {
+  width: auto;
+  background-color: white;
+  height: auto;
+  padding: 1px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5%;
+}
+
+.inputArea input[type="number"] {
+  height: 25px;
+  width: 80%;
+  padding: 5px 20px;
+  box-sizing: border-box;
+  border: none;
+  background-color: lightgray;
+  color: black;
+  text-align: center;
+  font-size: 15px;
+  outline: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.widthInput,
+.lengthInput {
+  position: relative;
+  background-color: var(--gray2);
+  padding: 2px;
+  margin-bottom: 5%;
+}
+
+.field__helper {
+  position: absolute;
+  top: 50%;
+  left: 65%;
+  transform: translate(0, -50%);
+  color: black;
+  font-size: 18px;
+}
+
+form label {
+  display: flex;
+  padding: 1%;
+  width: auto;
+  background-color: none;
+}
+
+.inputArea .inches {
+  height: 25px;
+  width: 18%;
+  float: right;
+}
+
+.inputArea .inches:hover {
+  cursor: pointer;
+}
+
+.dragBar {
+  margin: 1%;
+  margin-top: 4%;
+  display: flex;
+  flex-direction: row;
+  width: auto;
+  height: 30px;
+  background-color: none;
+  border: 2px var(--gray2) solid;
+  display: flex;
+  padding: 0.5%;
+  text-align: center;
+  align-items: center;
+}
+
+.dragBar p {
+  padding: 1%;
+  background-color: none;
+  margin-left: 0.5%;
+}
+.sliderInner {
+  background-color: none;
+  width: 210px;
+}
+
+.sldr {
+  -webkit-appearance: none;
+  margin-top: 5px;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+}
+
+.sldr::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: black;
+  cursor: pointer;
+}
+
+.submitDimensions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 25px;
+  color: white;
+  background-color: var(--gray2);
+  margin-left: 50%;
+  transform: translateX(-50%);
+  margin-top: 10%;
+  border-radius: 5px;
+}
+
+.submitDimensions:hover {
+  cursor: pointer;
+}
+
+/*---------------------end Home nav stuff------------------*/
+
+/*---------------------begin grid nav stuff----------------*/
+.gridToggleContainer {
+  width: auto;
+  height: auto;
+  background-color: none;
+  margin: 2%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  padding: 2%;
+  border: 2px var(--gray2) solid;
+}
+
+.gridToggleContainer h4,
+.gridIntervals h4 {
+  margin-bottom: 3%;
+}
+.switchMenu {
+  width: 100%;
+  height: 100%;
+  background-color: green;
+  display: flex;
+  margin-top: 1%;
+}
+
+.gridIntervals {
+  width: auto;
+  float: right;
+  height: auto;
+  padding: 2%;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  justify-content: center;
+  background-color: none;
+  margin: 2%;
+  border: 2px #212121 solid;
+}
+
+.gridIntervals select {
+  width: 100px;
+  text-align: center;
+  height: 25px;
+  border: 3px solid gray;
+  align-self: center;
+}
+.toggleAndButtons {
+  width: auto;
+  height: auto;
+  background-color: lightgray;
+  border: solid 3px gray;
+  padding: 2% 1% 2% 2%;
+  justify-content: center;
+  display: flex;
+}
+/*toggle button stuff*/
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 64px;
+  height: 34px;
+  transform: rotate(180deg);
+}
+
+.slider { /*the outside large continer (rectangular)*/
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #696969;
+  /* background-color: green; */
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+/*to make the innner box move left and right*/
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: darkgrey;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px darkgrey;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(30px);
+  -ms-transform: translateX(30px);
+  transform: translateX(30px);
+}
+
+.toggleAndButtons button {
+  width: 35%;
+  height: 34px;
+  padding: 1%;
+  border-style: none;
+  border: none;
+  margin-left: 3%;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: white;
+}
+/* end toggle button stuff*/
+
+/*-----------------------end Grid stuff---------------*/
+
+/*-----------------------begin edit stuff---------------*/
+.shell {
+  width: auto;
+  height: 100%;
+  background-color: none;
+  margin: 1%;
+  background-color: white;
+}
+
+.drawArea,
+.eraseArea,
+.bSplineArea {
+  background-color: green;
+  width: auto;
+  height: auto;
+  padding: 2%;
+  /*margin: 0.4%;*/
+}
+
+.drawArea,
+.eraseArea,
+.bSplineArea {
+  text-align: left;
+  background-color: #eeeeee;
+  margin-bottom: 5%;
+}
+
+.drawArea .drawButtons,
+.eraseArea .eraseButtons {
+  width: auto;
+  display: flex;
+  height: 25px;
+  align-items: center;
+  justify-content: center;
+  background-color: #393e46;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.drawButtons button,
+.eraseButtons button,
+.buttonAndToggleArea button {
+  width: 40%;
+  height: 20px;
+  display: inline;
+  margin: 1%;
+}
+
+.buttonAndToggleArea button{
+  width: auto;
+  height: 30px;
+  margin-left: 5%;
+  border: 2px var(--gray2) solid;
+  padding: 1%;
+}
+
+
+.buttonAndToggleArea button:hover{
+  cursor: pointer;
+  background-color: rgba(57, 62, 70, 0.19);
+}
+
+.drawButtons button:hover,
+.eraseButtons button:hover
+.buttonAndToggleArea button:hover  {
+  cursor: pointer;
+}
+.pointsOutput {
+  width: auto;
+  height: 125px;
+  background-color: white;
+  border: #212121 2px solid;
+  overflow-y: auto;
+  font-size: 16px;
+  text-align: center;
+  white-space: pre;
+  margin-top: 2%;
+}
+
+.togglePointsArea{
+  background-color: var(--gray1);
+  padding: 1%;
+  border: 2px solid var(--gray2);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+  margin-top: 1%;
+}
+
+.togglePointsArea h3{
+  margin-right: 5%;
+}
+/*-----------------------end edit stuff---------------*/
+
+/*-----------------------begin ground plan stuff---------------*/
+.groundPlanContainer {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  background-color: white;
+  margin: 1%;
+  padding: 1%;
+  border: 2px var(--gray2) solid;
+  text-align: left;
+}
+
+.groundPlanContainer h3{
+  margin-bottom: 1%;
+}
+.groundPlanContainer button {
+  width: 40%;
+  height: 25px;
+  display: inline;
+  margin: 1%;
+  padding: 1%;
+  border: 2px var(--gray2) solid;
+}
+
+.groundPlanContainer button:hover {
+  cursor: pointer;
+}
+
+.buttonAndToggleArea {
+  width: auto;
+  display: flex;
+  height: auto;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  margin-top: 1%;
+  margin-bottom: 1%;
+  border: 2px var(--gray2) solid;
+  text-align: center;
+}
+
+
+/*-----------------------end ground plan stuff---------------*/
+
+.saveWorkspace, .uploadWorkspace{
+  width: auto;
+  height: auto;
+  display: flex;
+  margin: 1%;
+  margin-bottom: 2%;
+  padding: 3%;
+}
+
+.workspaceInner{
+  width: 100%;
+  height: 30px;
+  display: flex;
+  padding: 1%;
+  border: 2px solid var(--gray2);
+  justify-content: center;
+  align-items: center;
+  margin: 1%;
+  background-color: white;
+}
+
+.workspaceInner button{
+  width: 50%;
+  height: auto;
+  border: 2px solid var(--gray2);
+  padding: 1%;
+}
+
+.workspaceInner button:hover{
+  cursor: pointer;
+  background-color: rgba(57, 62, 70, 0.19);;
+}
+
+/*----------------------*/
+input[type="file"] {
+  width: 100%;
+}
+/*
+@media screen and (max-width: 1000px){
+  
+}
+*/
