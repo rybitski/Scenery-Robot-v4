@@ -80,6 +80,7 @@
               <span class="iconify" onclick = "sendPath()" data-icon="mdi-robot" data-inline="false" style = "font-size:25px; color:white;" ></span>
             </div>
 
+            <!-- Dimensions Input Tab -->
             <div id = "target" class = "sideBarDetails">
               <div class ="baseSetting" >
                 <h2>Home</h2>
@@ -148,6 +149,7 @@
               </div>
             </div>
           
+            <!-- Grid Function Tab -->
             <div id = "target" class = "sideBarDetails">
               <div class ="baseSetting" >
                 <h2>Grid</h2>
@@ -175,9 +177,50 @@
               </div>
             </div>
 
+            <!-- Drawing Tab -->
             <div id = "target" class = "sideBarDetails">
+              <div class ="baseSetting" >
+                <h2>Edit</h2>
+                <div class = "shell">
+                  <div class = "drawArea">
+                    <h3>Draw</h3>
+                    <div class = "pointsOutput" id = "pointsOutput">
+                    </div>
+                    <div class="drawButtons">
+                      <button onclick = "displayPoints()" type="getPoints">Get Points</button>
+                      <button id = "copyButton" onclick="copyPointsFunction()"> Copy Points</button>
+                    </div>
+                    <div class="drawButtons">
+                      <button onclick = "reloadPage()">Reset</button>
+                      <button> </button>
+                    </div>
+                    <div class = "togglePointsArea">
+                      <h3>User Drawing</h3>
+                      <label class="switch">
+                        <input onclick= "displayLine()" type="checkbox" id = "userDrawingCheckbox">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                    <div class = "togglePointsArea">
+                      <h3>Critcal Points</h3>
+                      <label class="switch" >
+                        <input onclick= "drawCoordinates()" type="checkbox" checked>
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class = "eraseArea">
+                    <h3>Erase</h3>
+                    <div class="eraseButtons">
+                      <button id = "deleteInBetween" onclick = "eraseFunction()">Erase</button>
+                      <button id = "cancelEditButton">Cancel Edit</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
+            <!-- Upload Ground Plan Tab -->
             <div id = "target" class = "sideBarDetails">
               <div class ="baseSetting" >
                 <h2>Ground Plan</h2>
@@ -200,6 +243,7 @@
               </div>
             </div>
 
+            <!-- Save Workspace Tab -->
             <div id = "target" class = "sideBarDetails">
               <div class ="baseSetting" >
                 <h2>Save/Upload</h2>
