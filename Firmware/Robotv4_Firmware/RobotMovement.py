@@ -325,6 +325,18 @@ while(True):
             speed = int(words[2])
             roboclaw.ForwardM2(address, speed)
             roboclaw.ForwardM1(address, speed)          
+    if (words[0] == "reverse"):
+        if(words[1] == "1"):
+            print("going reverse")
+            speed = int(words[2])
+            roboclaw.BackwardM1(address, speed)
+        elif(words[1] == "2"):
+            speed = int(words[2])
+            roboclaw.BackwardM2(address, speed)
+        elif(words[1] == "all"):
+            speed = int(words[2])
+            roboclaw.BackwardM2(address, speed)
+            roboclaw.BackwardM1(address, speed)        
     elif(words[0] == "stop"):
         stop()
     elif(words[0] == "enc"):
