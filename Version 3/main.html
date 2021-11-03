@@ -1,272 +1,275 @@
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html>
+<html lang="en">
 
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js" integrity="sha512-wBcFatf7yQavHQWtf4ZEjvtVz4XkYISO96hzvejfh18tn3OrJ3sPBppH0B6q/1SHB4OKHaNNUKqOmsiTGlOM/g==" crossorigin="anonymous"></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
-  
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    
-      <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
-      <!--  This is the css for the index.html page-->
-      <link rel="stylesheet" type="text/css" href="css/style.css" />
-      <title>Document</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"
+    integrity="sha512-wBcFatf7yQavHQWtf4ZEjvtVz4XkYISO96hzvejfh18tn3OrJ3sPBppH0B6q/1SHB4OKHaNNUKqOmsiTGlOM/g=="
+    crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+  <!--  This is the css for the index.html page-->
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <title>Document</title>
 
 
-      <!--Used for dxf file formating-->
+  <!--Used for dxf file formating-->
 
-    </head>
-    <body>
-      <div class="headerContainer">
-        <!--          This is the navbar        -->
-        <div class="navbar">
-          <div class="logo">
-            Scenery Robot
-          </div>
-          <div class="navlinks">
-            <ul>
-              <li><a href="">Github</a></li>
-              <li><a href="">Wiki</a></li>
-              <li onclick="toggleModalOn()"><a>Tutorial</a></li>
-            </ul>
-          </div>
+</head>
+
+<body>
+  <div class="headerContainer">
+    <!--          This is the navbar        -->
+    <div class="navbar">
+      <div class="logo">
+        Scenery Robot
+      </div>
+      <div class="navlinks">
+        <ul>
+          <li><a href="">Github</a></li>
+          <li><a href="">Wiki</a></li>
+          <li onclick="toggleModalOn()"><a>Tutorial</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!--          This container holds the canvas and the right input and output container        -->
+    <div class="innerContainer" id="innerCont">
+      <!--          These are the canvases       -->
+      <div class="leftContainer" id="leftCont">
+        <canvas id="gridCanvas" class="backgroundCanvas">
+          <!-- This canvas stores grid lines-->
+        </canvas>
+        <canvas id="groundPlanCanvas" class="gpCanvas">
+        </canvas>
+        <canvas id="bSplineCanvas" class="bsCanvas">
+        </canvas>
+        <canvas id="drawingCanvas" class="topCanvas">
+          <!-- This canvas stores user drawn lines-->
+        </canvas>
+        <canvas id="pointsCanvas" class="pointsCanvas">
+          <!-- This canvas is used to display the extracted points-->
+        </canvas>
+        <canvas id="darkthemeCanvas" class="darkthemeCanvas">
+          <!-- This canvas is used to display the extracted points-->
+        </canvas>
+        <div class="xAxis" id="xAxis">(0, 0)</div>
+        <span class="popuptext" id="myPopup">Invalid Stage Dimensions</span>
+        <span class="pointsPopup" id="pointsPopup">Points Are On</span>
+        <!--   <span class="popuptext" id="myPopup">Fix the Dimensions </span> -->
+      </div>
+      <div class="hoverSideNavbar">
+        <div class="iconsContainer">
+          <i class="fa fa-home" onclick="callSideBar(0)" style='font-size:20px;color:white'></i>
+          <i class="fa fa-table" onclick="callSideBar(1)" style='font-size:20px;color:white'></i>
+          <i class="fa fa-pencil" onclick="callSideBar(2)" style='font-size:20px;color:white'></i>
+          <i class="fa fa-map" onclick="callSideBar(3)" style='font-size:20px;color:white'></i>
+          <i class="fa fa-cloud" onclick="callSideBar(4)" style="font-size:20px; color:white;"></i>
+          <span class="iconify" onclick="sendPath()" data-icon="mdi-robot" data-inline="false"
+            style="font-size:25px; color:white;"></span>
         </div>
 
-        <!--          This container holds the canvas and the right input and output container        -->
-        <div class="innerContainer" id = "innerCont">
-          <!--          These are the canvases       -->
-          <div class = "leftContainer" id = "leftCont"  > 
-          <canvas
-            id="gridCanvas"
-            class="backgroundCanvas"> <!-- This canvas stores grid lines-->
-          </canvas>
-          <canvas 
-            id = "groundPlanCanvas" 
-            class = "gpCanvas">
-          </canvas>
-          <canvas 
-            id = "bSplineCanvas" 
-            class = "bsCanvas">
-          </canvas>
-          <canvas
-            id="drawingCanvas"
-            class="topCanvas"><!-- This canvas stores user drawn lines-->
-          </canvas>
-          <canvas 
-            id="pointsCanvas"
-            class="pointsCanvas"> <!-- This canvas is used to display the extracted points-->
-          </canvas>
-          <canvas 
-            id="darkthemeCanvas"
-            class="darkthemeCanvas"> <!-- This canvas is used to display the extracted points-->
-          </canvas>
-          <div class ="xAxis" id = "xAxis">(0, 0)</div>
-          <span class="popuptext" id="myPopup">Invalid Stage Dimensions</span>
-          <span class="pointsPopup" id="pointsPopup">Points Are On</span>
-          <!--   <span class="popuptext" id="myPopup">Fix the Dimensions </span> -->
-          </div>
-          <div class = "hoverSideNavbar"> 
-            <div class = "iconsContainer">
-              <i class="fa fa-home" onclick = "callSideBar(0)" style='font-size:20px;color:white'></i>
-              <i class="fa fa-table" onclick = "callSideBar(1)" style='font-size:20px;color:white'></i>
-              <i class="fa fa-pencil" onclick = "callSideBar(2)" style='font-size:20px;color:white'></i>
-              <i class="fa fa-map" onclick = "callSideBar(3)" style='font-size:20px;color:white'></i>
-              <i class="fa fa-cloud" onclick = "callSideBar(4)" style = "font-size:20px; color:white;"></i>
-              <span class="iconify" onclick = "sendPath()" data-icon="mdi-robot" data-inline="false" style = "font-size:25px; color:white;" ></span>
+        <!-- Dimensions Input Tab -->
+        <div id="target" class="sideBarDetails">
+          <div class="baseSetting">
+            <h2>Home</h2>
+            <div class="displayDimensions">
+              <h3 id="widthDisplay"> Width of Stage: </h3>
+              <h3 id="heightDisplay"> Depth of Stage: </h3>
+              <h3 id="rateDisplay"> Critical Point Rate:</h3>
             </div>
-
-            <!-- Dimensions Input Tab -->
-            <div id = "target" class = "sideBarDetails">
-              <div class ="baseSetting" >
-                <h2>Home</h2>
-                <div class = "displayDimensions">
-                  <h3 id = "widthDisplay"> Width of Stage: </h3>
-                  <h3 id = "heightDisplay"> Depth of Stage: </h3>
-                  <h3 id = "rateDisplay"> Critical Point Rate:</h3>
-                </div>
-                <div class = "inputArea">
-                  <form>
-                    <label>Width of Stage:</label>
-                    <div class = "widthInput">
-                      <input id = "stageWidth" value="" type="number" pattern="[0-9]+"/>
-                      <span class="field__helper">feet</span>
-                      <select class="inches" id="inchesWidth">
-                        <option value="0">0 in</option>
-                        <option value="1">1 in</option>
-                        <option value="2">2 in</option>
-                        <option value="3">3 in</option>
-                        <option value="4">4 in</option>
-                        <option value="5">5 in</option>
-                        <option value="6">6 in</option>
-                        <option value="7">7 in</option>
-                        <option value="8">8 in</option>
-                        <option value="8">9 in</option>
-                        <option value="10">10 in</option>
-                        <option value="11">11 in</option>
-                      </select>
-                    </div>
-                    <label for="length">Depth of Stage:</label>
-                    <div class = "lengthInput">
-                      <input id = "stageHeight" value="" type="number" pattern="[0-9]+" />
-                      <span class="field__helper">feet</span>
-                      <select class="inches" id="inchesHeight">
-                        <option value="0">0 in</option>
-                        <option value="1">1 in</option>
-                        <option value="2">2 in</option>
-                        <option value="3">3 in</option>
-                        <option value="4">4 in</option>
-                        <option value="5">5 in</option>
-                        <option value="6">6 in</option>
-                        <option value="7">7 in</option>
-                        <option value="8">8 in</option>
-                        <option value="8">9 in</option>
-                        <option value="10">10 in</option>
-                        <option value="11">11 in</option>
-                      </select>
-                    </div>
-                  </form>
-                  <div class = "dragBar">
-                    <div class = "sliderInner">
-                      <input
-                        type="range"
-                        min=".01"
-                        max="1"
-                        step=".01"
-                        value=".05"
-                        class="sldr"
-                        id="myRange"
-                      ></input >
-                    </div>
-                    <p id = "demo" class="sliderOutput"></p>
-                  </div>
-                </div>
-                <div class = "submitDimensions" onclick = "newTrack()"><h5>Submit</h5></div>
-              </div>
-            </div>
-          
-            <!-- Grid Function Tab -->
-            <div id = "target" class = "sideBarDetails">
-              <div class ="baseSetting" >
-                <h2>Grid</h2>
-                <div class= "gridIntervals">
-                  <h4>Display Grid Intervals Every:</h4>
-                  <select class="frequency" id="frequency" onchange="myFunction()">
-                    <option value=".5" >1/2</option>
-                    <option value=".33">1/3</option>
-                    <option value=".25" selected="selected">1/4</option>
-                    <option value=".2" >1/5</option>
-                    <option value=".166">1/6</option>
-                    <option value=".142" >1/7</option>
-                    <option value=".125" >1/8</option>
+            <div class="inputArea">
+              <form>
+                <label>Width of Stage:</label>
+                <div class="widthInput">
+                  <input id="stageWidth" value="" type="number" pattern="[0-9]+" />
+                  <span class="field__helper">feet</span>
+                  <select class="inches" id="inchesWidth">
+                    <option value="0">0 in</option>
+                    <option value="1">1 in</option>
+                    <option value="2">2 in</option>
+                    <option value="3">3 in</option>
+                    <option value="4">4 in</option>
+                    <option value="5">5 in</option>
+                    <option value="6">6 in</option>
+                    <option value="7">7 in</option>
+                    <option value="8">8 in</option>
+                    <option value="8">9 in</option>
+                    <option value="10">10 in</option>
+                    <option value="11">11 in</option>
                   </select>
                 </div>
-                <div class = "gridToggleContainer">
-                  <h4>Toggle Grid</h4>
-                  <div class = "toggleAndButtons">
+                <label for="length">Depth of Stage:</label>
+                <div class="lengthInput">
+                  <input id="stageHeight" value="" type="number" pattern="[0-9]+" />
+                  <span class="field__helper">feet</span>
+                  <select class="inches" id="inchesHeight">
+                    <option value="0">0 in</option>
+                    <option value="1">1 in</option>
+                    <option value="2">2 in</option>
+                    <option value="3">3 in</option>
+                    <option value="4">4 in</option>
+                    <option value="5">5 in</option>
+                    <option value="6">6 in</option>
+                    <option value="7">7 in</option>
+                    <option value="8">8 in</option>
+                    <option value="8">9 in</option>
+                    <option value="10">10 in</option>
+                    <option value="11">11 in</option>
+                  </select>
+                </div>
+              </form>
+              <div class="dragBar">
+                <div class="sliderInner">
+                  <input type="range" min=".01" max="1" step=".01" value=".05" class="sldr" id="myRange"></input>
+                </div>
+                <p id="demo" class="sliderOutput"></p>
+              </div>
+            </div>
+            <div class="submitDimensions" onclick="newTrack()">
+              <h5>Submit</h5>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid Function Tab -->
+        <div id="target" class="sideBarDetails">
+          <div class="baseSetting">
+            <h2>Grid</h2>
+            <div class="gridIntervals">
+              <h4>Display Grid Intervals Every:</h4>
+              <select class="frequency" id="frequency" onchange="myFunction()">
+                <option value=".5">1/2</option>
+                <option value=".33">1/3</option>
+                <option value=".25" selected="selected">1/4</option>
+                <option value=".2">1/5</option>
+                <option value=".166">1/6</option>
+                <option value=".142">1/7</option>
+                <option value=".125">1/8</option>
+              </select>
+            </div>
+            <div class="gridToggleContainer">
+              <h4>Toggle Grid</h4>
+              <div class="toggleAndButtons">
+                <label class="switch">
+                  <input onclick="gridToggle()" type="checkbox">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drawing Tab -->
+        <div id="target" class="sideBarDetails">
+          <div class="baseSetting">
+            <h2>Edit</h2>
+            <div class="shell">
+              <div class="drawArea">
+                <h3>Draw</h3>
+                <div class="pointsOutput" id="pointsOutput">
+                </div>
+                <div class="drawButtons">
+                  <button onclick="displayPoints()" type="getPoints">Get Points</button>
+                  <button id="copyButton" onclick="copyPointsFunction()"> Copy Points</button>
+                </div>
+                <div class="drawButtons">
+                  <button onclick="reloadPage()">Reset</button>
+                  <button> </button>
+                </div>
+                <div class="togglePointsArea">
+                  <h3>User Drawing</h3>
                   <label class="switch">
-                    <input onclick="gridToggle()" type="checkbox">
+                    <input onclick="displayLine()" type="checkbox" id="userDrawingCheckbox">
                     <span class="slider"></span>
                   </label>
-                  </div>
+                </div>
+                <div class="togglePointsArea">
+                  <h3>Critcal Points</h3>
+                  <label class="switch">
+                    <input onclick="drawCoordinates()" type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="bSplineArea">
+                <h3>Toggle B-Spline Curve</h3>
+                <div class="buttonAndToggleArea" style="height: 40px; background-color: #eeeeee;">
+                  <label class="switch">
+                    <input onclick="showBSplineCurve()" type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                  <button id="calcBSpline" onclick="calculateBSpline()"> Calculate B-Spline</button>
+                </div>
+              </div>
+              <div class="eraseArea">
+                <h3>Erase</h3>
+                <div class="eraseButtons">
+                  <button id="deleteInBetween" onclick="eraseFunction()">Erase</button>
+                  <button id="cancelEditButton">Cancel Edit</button>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            <!-- Drawing Tab -->
-            <div id = "target" class = "sideBarDetails">
-              <div class ="baseSetting" >
-                <h2>Edit</h2>
-                <div class = "shell">
-                  <div class = "drawArea">
-                    <h3>Draw</h3>
-                    <div class = "pointsOutput" id = "pointsOutput">
-                    </div>
-                    <div class="drawButtons">
-                      <button onclick = "displayPoints()" type="getPoints">Get Points</button>
-                      <button id = "copyButton" onclick="copyPointsFunction()"> Copy Points</button>
-                    </div>
-                    <div class="drawButtons">
-                      <button onclick = "reloadPage()">Reset</button>
-                      <button> </button>
-                    </div>
-                    <div class = "togglePointsArea">
-                      <h3>User Drawing</h3>
-                      <label class="switch">
-                        <input onclick= "displayLine()" type="checkbox" id = "userDrawingCheckbox">
-                        <span class="slider"></span>
-                      </label>
-                    </div>
-                    <div class = "togglePointsArea">
-                      <h3>Critcal Points</h3>
-                      <label class="switch" >
-                        <input onclick= "drawCoordinates()" type="checkbox" checked>
-                        <span class="slider"></span>
-                      </label>
-                    </div>
-                  </div>
-                  <div class = "eraseArea">
-                    <h3>Erase</h3>
-                    <div class="eraseButtons">
-                      <button id = "deleteInBetween" onclick = "eraseFunction()">Erase</button>
-                      <button id = "cancelEditButton">Cancel Edit</button>
-                    </div>
-                  </div>
-                </div>
+        <!-- Upload Ground Plan Tab -->
+        <div id="target" class="sideBarDetails">
+          <div class="baseSetting">
+            <h2>Ground Plan</h2>
+            <div class="groundPlanContainer">
+              <h3>Upload file</h3>
+              <div class="buttonAndToggleArea">
+                <button onclick="document.getElementById('groundPlanSelect').click();"
+                  class="uploadGroundPlanButton">Select File</button>
+                <input style="display: none;"" type=" file" id="groundPlanSelect" accept=".dxf" />
               </div>
             </div>
+            <div class="groundPlanContainer">
+              <h3>Toggle Ground Plan</h3>
+              <div class="buttonAndToggleArea" style="height: 45px; background-color: #eeeeee;">
+                <label class="switch">
+                  <input onclick="startGroundPlan()" type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            <!-- Upload Ground Plan Tab -->
-            <div id = "target" class = "sideBarDetails">
-              <div class ="baseSetting" >
-                <h2>Ground Plan</h2>
-                <div class = "groundPlanContainer">
-                  <h3>Upload file</h3>
-                  <div class ="buttonAndToggleArea">
-                    <button onclick="document.getElementById('groundPlanSelect').click();" class = "uploadGroundPlanButton">Select File</button>
-                    <input style = "display: none;"" type="file" id = "groundPlanSelect" accept=".dxf" />
-                  </div>
-                </div>
-                <div class = "groundPlanContainer">
-                  <h3>Toggle Ground Plan</h3>
-                  <div class ="buttonAndToggleArea" style = "height: 45px; background-color: #eeeeee;">
-                    <label class="switch">
-                      <input onclick= "startGroundPlan()" type="checkbox" checked>
-                      <span class="slider"></span>
-                    </label>
-                  </div>
-                </div>
+        <!-- Save Workspace Tab -->
+        <div id="target" class="sideBarDetails">
+          <div class="baseSetting">
+            <h2>Save/Upload</h2>
+            <div class="saveWorkspace">
+              <h3>Save Workspace</h3>
+              <div class="workspaceInner">
+                <button class="uploadWorkspaceButton" id="saveWork">Save</button>
               </div>
             </div>
-
-            <!-- Save Workspace Tab -->
-            <div id = "target" class = "sideBarDetails">
-              <div class ="baseSetting" >
-                <h2>Save/Upload</h2>
-                <div class = "saveWorkspace">
-                  <h3>Save Workspace</h3>
-                  <div class = "workspaceInner">
-                    <button class = "uploadWorkspaceButton" id = "saveWork">Save</button>
-                  </div>
-                </div>
-                <div class = "uploadWorkspace">
-                  <h3>Upload Workspace</h3>
-                  <div class = "workspaceInner">
-                    <button class =   "downloadWorkspaceButton" onclick="document.getElementById('docpicker').click();">Upload</button>
-                    <input style="display: none;" type="file" id="docpicker" accept=".csv,application/vnd.ms-excel,.xlt,application/vnd.ms-excel,.xla,application/vnd.ms-excel,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xltx,application/vnd.openxmlformats-officedocument.spreadsheetml.template,.xlsm,application/vnd.ms-excel.sheet.macroEnabled.12,.xltm,application/vnd.ms-excel.template.macroEnabled.12,.xlam,application/vnd.ms-excel.addin.macroEnabled.12,.xlsb,application/vnd.ms-excel.sheet.binary.macroEnabled.12"/>
-                  </div>
-                </div>
+            <div class="uploadWorkspace">
+              <h3>Upload Workspace</h3>
+              <div class="workspaceInner">
+                <button class="downloadWorkspaceButton"
+                  onclick="document.getElementById('docpicker').click();">Upload</button>
+                <input style="display: none;" type="file" id="docpicker"
+                  accept=".csv,application/vnd.ms-excel,.xlt,application/vnd.ms-excel,.xla,application/vnd.ms-excel,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xltx,application/vnd.openxmlformats-officedocument.spreadsheetml.template,.xlsm,application/vnd.ms-excel.sheet.macroEnabled.12,.xltm,application/vnd.ms-excel.template.macroEnabled.12,.xlam,application/vnd.ms-excel.addin.macroEnabled.12,.xlsb,application/vnd.ms-excel.sheet.binary.macroEnabled.12" />
               </div>
             </div>
-          </div>            
+          </div>
         </div>
       </div>
-    </body>
-  </html>
-  <script src = "/main.js"></script>
-  
-  
+    </div>
+  </div>
+</body>
+
+</html>
+<script src="/main.js"></script>
