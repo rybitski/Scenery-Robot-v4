@@ -69,6 +69,7 @@ var displayGridOnLoad = true;
 
 function myFunction() {
   console.log("i was here");
+  //frequency = document.getElementById("frequency").value;
   removeGridIntervals();
   displayGrid();
 }
@@ -97,6 +98,8 @@ ctx.canvas.height = gridCanvas.getBoundingClientRect().height;
 
 gridWidth = gridCanvas.getBoundingClientRect().width;
 gridHeight = gridCanvas.getBoundingClientRect().height;
+
+var frequency = document.getElementById("frequency").value;
 
 function displayGrid() {
   clearGrid();
@@ -253,26 +256,23 @@ var haveDimensions = false;
 
 
 function newTrack() {
-  var w, h;
+  frequency = document.getElementById("frequency").value;
+
   stageWidth = parseInt(document.getElementById("stageWidth").value, 10);
   stageHeight = parseInt(document.getElementById("stageHeight").value, 10);
-  w = "" + stageWidth + "' ";
-  h = "" + stageHeight + "' ";
+  
 
   var stageWidthInch =
     parseInt(document.getElementById("inchesWidth").value, 10) / 12;
   var stageHeightInch =
     parseInt(document.getElementById("inchesHeight").value, 10) / 12;
 
-  w += document.getElementById("inchesWidth").value + '"';
-  h += document.getElementById("inchesHeight").value + '"';
-
   stageWidth += stageWidthInch;
   stageHeight += stageHeightInch;
   stageWidth = stageWidth.toFixed(2);
   stageHeight = stageHeight.toFixed(2);
 
-  interval = document.getElementById("myRange").value * 1000; // this will turn the seconds into milliseconds
+  
 
   if (
     document.getElementById("stageWidth").value == "" ||
@@ -280,14 +280,47 @@ function newTrack() {
   ) {
     alert("Please Enter Valid Dimensions");
   } else {
-    document.getElementById("widthDisplay").innerText = "Width of Stage: " + w;
-    document.getElementById("heightDisplay").innerText = "Depth of Stage: " + h;
-    document.getElementById("rateDisplay").innerText =
-      "Critical Point Rate: " + interval + " ms";
+    setVisuals();
+  }
+}
+
+function setVisuals() {
+  var w, h;
+
+  w = "" + dimensionHelper(stageWidth)[0] + "' " + dimensionHelper(stageWidth)[1] + "\"";
+  h = "" + + dimensionHelper(stageHeight)[0] + "' " + dimensionHelper(stageHeight)[1] + "\"";
+
+  interval = document.getElementById("myRange").value * 1000; // this will turn the seconds into milliseconds
+    
+  document.getElementById("widthDisplay").innerText = "Width of Stage: " + w;
+  document.getElementById("heightDisplay").innerText = "Depth of Stage: " + h;
+  document.getElementById("rateDisplay").innerText =
+    "Critical Point Rate: " + interval + " ms";
+
+  document.getElementById("frequency").value = frequency;
+  
+
+  if(!isNaN(stageWidth)&&!isNaN(stageHeight)){
+    console.log([stageWidth,stageHeight])
+    let widthinches = (stageWidth*12)%12;
+    let heightinches = (stageHeight*12)%12;
+    let widthfeet = Math.trunc(stageWidth)
+    let heightfeet = Math.trunc(stageHeight)
+    document.getElementById("stageWidth").value = widthfeet;
+    document.getElementById("stageHeight").value = heightfeet;
+    document.getElementById("inchesWidth").value = widthinches.toFixed(0);
+    document.getElementById("inchesHeight").value = heightinches.toFixed(0);
+    console.log([widthfeet,widthinches,heightfeet,heightinches])
     haveDimensions = true;
     isValidToDraw = true;
     myFunction();
   }
+}
+
+function dimensionHelper(dimension){
+  inches = (dimension*12).toFixed(0) % 12;
+  feet = Math.trunc(dimension);
+  return [feet,inches];
 }
 
 var slider = document.getElementById("myRange");
@@ -336,25 +369,49 @@ function reDrawPoints() {
 //#region Save Workspace Section
 
 document.querySelector("#saveWork").addEventListener("click", () => {
+  console.log(dimensionHelper(stageHeight));
+  console.log(dimensionHelper(stageWidth));
+
   for (var i = 0; i < fullMouseHistoryPoints.length; i++) {
     console.log(fullMouseHistoryPoints[i].x);
   }
 
   var wb = XLSX.utils.book_new();
   wb.Props = {
-    Title: "SheetJS Tutorial",
+    Title: "Scenery Robot Workspace",
     Subject: "Test",
-    Author: "Red Stapler",
-    CreatedDate: new Date(2017, 12, 19),
+    Author: "University of Virginia Research Team",
+    CreatedDate: new Date(1819, 01, 25),
   };
 
-  wb.SheetNames.push("Test Sheet");
-  var ws_data = [["mouseHistoryX", "mouseHistoryY"]];
+  
+  wb.SheetNames.push("Workspace Summary");
+  var summaryData = [["StageWidth", "StageWidthInches","StageHeight","StageHeightInches","gridInterval","gridToggled","pointsToggled","groundPlan","groundPlanToggled","slider"]];
+  var widthVals = dimensionHelper(stageWidth);
+  var heightVals = dimensionHelper(stageHeight);
+  summaryData.push([]);
+  summaryData[1].push(widthVals[0]);
+  summaryData[1].push(widthVals[1]);
+  summaryData[1].push(heightVals[0]);
+  summaryData[1].push(heightVals[1]);
+  summaryData[1].push(frequency);
+  summaryData[1].push(isGridToggled);
+  summaryData[1].push(isPointsToggled);
+  summaryData[1].push("temp");
+  summaryData[1].push(groundPlanShowing);
+  summaryData[1].push("temp");
+
+  var summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+  wb.Sheets["Workspace Summary"] = summarySheet;
+
+  wb.SheetNames.push("Point Data");
+  
+  var wsData = [["mouseHistoryX", "mouseHistoryY"]];
   for (var i = 0; i < fullMouseHistoryPoints.length; i++) {
     var temp = [];
     temp.push(fullMouseHistoryPoints[i].x);
     temp.push(fullMouseHistoryPoints[i].y);
-    ws_data.push(temp);
+    wsData.push(temp);
   }
   var criticalPointsHeading = [
     "XPos",
@@ -364,7 +421,7 @@ document.querySelector("#saveWork").addEventListener("click", () => {
     "isClicked",
     "Color",
   ];
-  ws_data.push(criticalPointsHeading);
+  wsData.push(criticalPointsHeading);
 
   for (var i = 0; i < criticalPointsList.length; i++) {
     var temp = [];
@@ -374,11 +431,11 @@ document.querySelector("#saveWork").addEventListener("click", () => {
     temp.push(criticalPointsList[i].height);
     temp.push(criticalPointsList[i].isClicked);
     temp.push(criticalPointsList[i].color);
-    ws_data.push(temp);
+    wsData.push(temp);
   }
 
-  var ws = XLSX.utils.aoa_to_sheet(ws_data);
-  wb.Sheets["Test Sheet"] = ws;
+  var ws = XLSX.utils.aoa_to_sheet(wsData);
+  wb.Sheets["Point Data"] = ws;
   var wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
   function s2ab(s) {
     var buf = new ArrayBuffer(s.length);
@@ -418,25 +475,32 @@ function processExcel(data) {
   var workbook = XLSX.read(data, {
     type: "binary",
   });
-  var firstSheet = workbook.SheetNames[0];
-  var excelRows = XLSX.utils.sheet_to_row_object_array(
-    workbook.Sheets[firstSheet]
+  var summarySheet = workbook.SheetNames[0];
+  var summaryRows = XLSX.utils.sheet_to_row_object_array(
+    workbook.Sheets[summarySheet]
   );
-  for (var i = 0; i < excelRows.length; i++) {
-    if (excelRows[i].mouseHistoryX == "XPos") {
+
+
+  var pointSheet = workbook.SheetNames[1];
+  var dataRows = XLSX.utils.sheet_to_row_object_array(
+    workbook.Sheets[pointSheet]
+  );
+
+  for (var i = 0; i < dataRows.length; i++) {
+    if (dataRows[i].mouseHistoryX == "XPos") {
       i++;
       isCritPoint = true;
     }
-
+    
     if (isCritPoint == false) {
       fullMouseHistoryPoints.push(
-        new myPoint(excelRows[i].mouseHistoryX, excelRows[i].mouseHistoryY)
+        new myPoint(dataRows[i].mouseHistoryX, dataRows[i].mouseHistoryY)
       );
     } else {
       criticalPointsList.push(
         new criticalPoint(
-          excelRows[i].mouseHistoryX + 5,
-          excelRows[i].mouseHistoryY + 5
+          dataRows[i].mouseHistoryX + 5,
+          dataRows[i].mouseHistoryY + 5
         )
       );
     }
@@ -446,6 +510,14 @@ function processExcel(data) {
     console.log(fullMouseHistoryPoints[i].x);
   }*/
   drawLinesFromHistory();
+  reDrawPoints();
+  console.log(summaryRows[0]);
+  stageWidth=summaryRows[0].StageWidth+summaryRows[0].StageWidthInches/12;
+  stageHeight=summaryRows[0].StageHeight+summaryRows[0].StageHeightInches/12;
+  console.log([stageHeight,stageWidth]);
+  isGridToggled=summaryRows[0].gridToggled;
+  frequency=summaryRows[0].gridInterval;
+  setVisuals();
 }
 
 //#endregion

@@ -239,11 +239,11 @@ function newTrack() {
 
 }
 function setVisuals() {
-  document.getElementById("displayDim").innerHTML =
+  document.getElementById("widthDisplay").innerHTML =
       "Width: " +
       stageWidth +
-      " inches \n" +
-      "Height: " +
+      " inches";
+  document.getElementById("widthDisplay").innerHTML =    "Height: " +
       stageHeight +
       " inches";
     //parseDimensions(stageWidth,stageHeight);
