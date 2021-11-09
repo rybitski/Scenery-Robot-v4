@@ -1190,6 +1190,7 @@ function sendFetchRequest(){
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-Type", "application/json");
   var data = JSON.stringify({ path: data });
+  console.log(url);
   xhr.send(data);
   console.log("fetch request sent");
   //data - [];
