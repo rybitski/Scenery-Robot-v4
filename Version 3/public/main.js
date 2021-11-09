@@ -49,7 +49,7 @@ function sendPath() {
     data.push([realX, realY]);
   }
   var xhr = new XMLHttpRequest();
-  var url = "https://scenery-robot-node.herokuapp.com/input";
+  var url = "";
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-Type", "application/json");
   var data = JSON.stringify({ path: data });
@@ -1128,6 +1128,109 @@ function cloneArray(inputArr) {
 //#endregion
 
 //#region Generating BSpline Section
+var oldData = null;
+var generatedArray = [];
+var bSplineShowing = false;
+
+//initialize the b-spline canvas
+var splineCanvas = document.getElementById("bSplineCanvas"); //get the canvas by name
+var splineCtx = splineCanvas.getContext("2d"); //set its dimentions to 2d
+splineCtx.canvas.width = splineCanvas.getBoundingClientRect().width;
+splineCtx.canvas.height = splineCanvas.getBoundingClientRect().height;
+
+function showBSplineCurve() {
+  console.log(generatedArray.length);
+  var myelement = document.getElementById("bSplineCanvas");
+  if (bSplineShowing == false) {
+    bSplineShowing = true;
+    myelement.style.visibility = "visible";
+    getData();   
+    bSplineDisplayHelper();
+  } else {
+    myelement.style.visibility = "hidden";
+    bSplineShowing = false;
+  }
+}
+
+function bSplineDisplayHelper(){
+  getData();
+  var rect = document.getElementById("bSplineCanvas").getBoundingClientRect();
+  clearSpline();
+  splineCtx.beginPath();
+  for (var i = 0; i < generatedArray.length-1; i++ ) {
+    var x = generatedArray[i].x;
+    var y = generatedArray[i].y;
+    splineCtx.moveTo(x, (Math.abs(generatedArray[i].y-rect.height)).toFixed(2));
+    splineCtx.lineTo(generatedArray[i+1].x, (Math.abs(generatedArray[i+1].y-rect.height)).toFixed(2));
+  }
+  splineCtx.strokeStyle = "#339933";
+  splineCtx.lineWidth = 1;
+  splineCtx.stroke();
+  splineCtx.closePath();
+}
+
+function clearSpline(){
+  splineCtx.clearRect(0, 0, splineCanvas.width, splineCanvas.height);
+}
+
+function calculateBSpline(){
+  sendFetchRequest();
+  getData();
+}
+
+function sendFetchRequest(){
+  var data = [];
+  var rect = document.getElementById("pointsCanvas").getBoundingClientRect();
+  for(var i = 0; i< criticalPointsList.length; i++){
+     data.push([(criticalPointsList[i].x+5).toFixed(2), (Math.abs(criticalPointsList[i].y+5-rect.height)).toFixed(2)])
+  }
+
+  var xhr = new XMLHttpRequest();
+  var url = "http://localhost:3000/callPython";
+  xhr.open("POST", url, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  var data = JSON.stringify({ path: data });
+  xhr.send(data);
+  console.log("fetch request sent");
+  //data - [];
+}
+
+function getData(){
+  var getData = null;
+  var delayInMilliseconds = 1000; //1 second
+  var localTimer = setInterval(function() {
+      let url = "http://localhost:3000/callPython";
+  fetch(url)
+  .then(response=>response.text())
+  .then(data=>{
+      getData = data;
+      if(getData != null && getData != oldData && getData.length > 1){
+        clearInterval(localTimer);
+        convertToArray(getData);
+        oldData = getData;
+        getData = null; //iffffy --------------------------------------
+      }
+      console.log("waiting to receive data from python script");
+  });
+  }, delayInMilliseconds);
+}
+
+function convertToArray(input){
+  generatedArray = [];
+  var vals = input.substring(0,input.length-1).split("\n");
+  for(var i = 0; i< vals.length/2; i++){
+    generatedArray.push(new myPoint(vals[i], vals[i+50]));
+  }
+  getData(); //infinite loop?
+  console.log("I was called");
+  /*
+  console.log(vals);
+  for(var i = 0; i< generatedArray.length; i++){
+    console.log("[",generatedArray[i].x, ",",generatedArray[i].y,"]" );
+  }
+  console.log(generatedArray)
+  */
+}
 
 //#endregion
 
