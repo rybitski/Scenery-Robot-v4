@@ -87,6 +87,16 @@ function gridToggle(){
   }
 }
 
+function setGridToggle(status){
+  gridSwitch = document.getElementById("gridSwitch");
+  gridToggleStatus = gridSwitch.checked;
+
+  if (gridToggleStatus == status){
+    gridSwitch.checked = !status;
+    gridToggle();
+    console.log(status);
+  }
+}
 
 //The following code draws a grid on a canvas
 //in order to get the grid to turn on and off, we will have to stack two canvas' on top of each other:
@@ -140,13 +150,13 @@ function clearGrid() {
 xAxisArray = [];
 yAxisArray = [];
 function displayGridIntervals() {
-  var axisFrequency = 0;
-  if(displayGridOnLoad == true){
-    axisFrequency = .25;
-    displayGridOnLoad = false;
-  }else{
-    axisFrequency = document.getElementById("frequency").value;
-  }
+  var axisFrequency = frequency;
+  // if(displayGridOnLoad == true){
+  //   axisFrequency = .25;
+  //   displayGridOnLoad = false;
+  // }else{
+  //   axisFrequency = document.getElementById("frequency").value;
+  // }
   
   yAxisArray.length = Math.floor(1 / axisFrequency);
   var intervalRate = displayYIntervals();
@@ -296,10 +306,9 @@ function setVisuals() {
   document.getElementById("heightDisplay").innerText = "Depth of Stage: " + h;
   document.getElementById("rateDisplay").innerText =
     "Critical Point Rate: " + interval + " ms";
-
+  
   document.getElementById("frequency").value = frequency;
   
-
   if(!isNaN(stageWidth)&&!isNaN(stageHeight)){
     console.log([stageWidth,stageHeight])
     let widthinches = (stageWidth*12)%12;
@@ -515,8 +524,9 @@ function processExcel(data) {
   stageWidth=summaryRows[0].StageWidth+summaryRows[0].StageWidthInches/12;
   stageHeight=summaryRows[0].StageHeight+summaryRows[0].StageHeightInches/12;
   console.log([stageHeight,stageWidth]);
-  isGridToggled=summaryRows[0].gridToggled;
   frequency=summaryRows[0].gridInterval;
+  setGridToggle(summaryRows[0].gridToggled);
+
   setVisuals();
 }
 
