@@ -562,17 +562,17 @@ document.addEventListener("mousemove", function (event) {
     ((event.clientY - rect.top) / (rect.bottom - rect.top)) *
     drawingCanvas.height;
 
-  if (drawingCanvas.contains(event.target)) {
+  if (drawingCanvas.contains(event.target)) { //checks if mouse is within canvas
     if (startDrawing) {
-      if (startTimerOnce) {
+      if (startTimerOnce) { //tracks time to collect new point each cycle
         startTimerOnce = false;
         timer = setInterval(function () {
-          if (drawingLocation == "end") {
+          if (drawingLocation == "end") { // drawing at beginning, middle, or end -> add points to array accordingly
             criticalPointsList.push(
               new criticalPoint(currentXPos, currentYPos)
             );
           }
-          if (drawingLocation == "beginning") {
+          if (drawingLocation == "beginning") { 
             criticalPointsList.unshift(
               new criticalPoint(currentXPos, currentYPos)
             );
