@@ -6,7 +6,10 @@ app.use(express.static(__dirname + ""));
 app.use(express.json());
 
 var path = [];
-
+var pythonpath = 'python'
+if (process.platform === 'darwin'){
+  pythonpath = '/usr/bin/python'
+}
 app.post("/input", function (req, res) {
   path = req.body.path;
 });
@@ -48,7 +51,7 @@ function callWhenclicked(dataInput){
   const{ spawn = () => null } = require('child_process');
   var data = dataInput;
 
-  const childPython = spawn('python', ['SplineDraw.py', JSON.stringify(data)]);
+  const childPython = spawn(pythonpath, ['SplineDraw.py', JSON.stringify(data)]);
   childPython.stdout.on('data', (data) =>{
     returnedData = data.toString('utf8');
   });
