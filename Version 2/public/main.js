@@ -1,11 +1,11 @@
 /*                                  Begin Seconds Range Slider Section                              */
-var slider = document.getElementById("myRange");
-var output = document.getElementById("demo");
-output.innerHTML = slider.value + " sec";
+// var slider = document.getElementById("myRange");
+// var output = document.getElementById("demo");
+// output.innerHTML = slider.value + " sec";
 
-slider.oninput = function () {
-  output.innerHTML = this.value + " sec";
-};
+// slider.oninput = function () {
+//   output.innerHTML = this.value + " sec";
+// };
 /*                                  End Seconds Range Slider Section                              */
 
 /*                                   Begin Display Grid (via Toggle Button) Section                      */
@@ -196,10 +196,14 @@ var stageHeight = 0;
 var interval = 0;
 var isToggled = false;
 var haveDimensions = false;
-//change from length to depth*****
-function newTrack() {
-  stageWidth = parseInt(document.getElementById("stageWidth").value, 10);
-  stageHeight = parseInt(document.getElementById("stageHeight").value, 10);
+
+function parseDimensions(width=undefined,height=undefined){
+  if(width==undefined){
+    stageWidth = parseInt(document.getElementById("stageWidth").value, 10);
+  }
+  if(height==undefined){
+    stageHeight = parseInt(document.getElementById("stageHeight").value, 10);
+  }
   var stageWidthInch =
     parseInt(document.getElementById("inchesWidth").value, 10) / 12;
   //(+document.getElementById("inchesWidth").value - 0) / 12;
@@ -212,7 +216,12 @@ function newTrack() {
   stageWidth = stageWidth.toFixed(2);
   stageHeight = stageHeight.toFixed(2);
   //console.log(stageWidth, stageHeight);
-  interval = document.getElementById("myRange").value * 1000; // this will turn the seconds into milliseconds
+  interval = .01; // this will turn the seconds into milliseconds
+  return [stageHeight,stageWidth]
+}
+//change from length to depth*****
+function newTrack() {
+  parseDimensions();
 
   var popup = document.getElementById("myPopup");
   if (stageWidth == 0 || stageHeight == 0) {
@@ -224,14 +233,31 @@ function newTrack() {
       popup.classList.toggle("show"); //this will remove the pop up warning
       isToggled = false;
     }
+    setVisuals();
+    
+  }
 
-    document.getElementById("displayDim").innerHTML =
+}
+function setVisuals() {
+  document.getElementById("widthDisplay").innerHTML =
       "Width: " +
       stageWidth +
-      " inches \n" +
-      "Height: " +
+      " inches";
+  document.getElementById("widthDisplay").innerHTML =    "Height: " +
       stageHeight +
       " inches";
+    //parseDimensions(stageWidth,stageHeight);
+  if(!isNaN(stageWidth)&&!isNaN(stageHeight)){
+    console.log([stageWidth,stageHeight])
+    let widthinches = (stageWidth*12)%12;
+    let heightinches = (stageHeight*12)%12;
+    let widthfeet = Math.trunc(stageWidth)
+    let heightfeet = Math.trunc(stageHeight)
+    document.getElementById("stageWidth").value = widthfeet;
+    document.getElementById("stageHeight").value = heightfeet;
+    document.getElementById("inchesWidth").value = widthinches;
+    document.getElementById("inchesHeight").value = heightinches;
+    console.log([widthfeet,widthinches,heightfeet,heightinches])
     haveDimensions = true;
   }
 }
@@ -249,16 +275,19 @@ function displayPoints() {
     console.log(criticalPointsList[i].x, criticalPointsList[i].y);
   }
   */
+ //console.log(criticalPointsList);
   var realX, realY;
   for (var i = 0; i < criticalPointsList.length; i++) {
     var tempx = criticalPointsList[i].x;
     var tempy = criticalPointsList[i].y;
     realX = ((tempx / rect.width) * stageWidth).toFixed(2);
     realX = convertXPixelsToInches(tempx);
+    
     //realX = convertXpxToInches)
     //realY = (stageHeight - (tempy / rect.height) * stageHeight).toFixed(2);
     realY = convertYPixelsToInches(tempy);
     //realY = Math.abs(stageWidth - convertYPixelsToInches(tempy));
+    console.log([tempx,tempy]);
     if (i + 1 == criticalPointsList.length) {
       //for the last set of points, do not add the extra comma at the end
       document.getElementById("xAndYCoordinates").innerHTML +=
@@ -839,6 +868,9 @@ function drawLinesFromHistory() {
 /*                                                    Begin Erase Button Section                            */
 var edit = false;
 function eraseFunction() {
+  console.log(isValidToDraw);
+  console.log(startDrawing);
+  console.log(editLocation);
   if (edit == false) {
     var startSplice, endSplice;
     editLocation = "middle";
@@ -1042,11 +1074,14 @@ function cloneArray(inputArr) {
 
 document.getElementById("docpicker").addEventListener("change", importFile);
 function importFile(evt) {
+  console.log("test");
   var f = evt.target.files[0];
-
+  
   if (f) {
+    document.getElementById("docpicker").value = '';
     var r = new FileReader();
     r.onload = (e) => {
+      
       var contents = processExcel(e.target.result);
     };
     r.readAsBinaryString(f);
@@ -1065,8 +1100,10 @@ function processExcel(data) {
   var excelRows = XLSX.utils.sheet_to_row_object_array(
     workbook.Sheets[firstSheet]
   );
+  var whindex = 0;
   for (var i = 0; i < excelRows.length; i++) {
     if (excelRows[i].mouseHistoryX == "XPos") {
+      whindex = i;
       i++;
       isCritPoint = true;
     }
@@ -1084,10 +1121,21 @@ function processExcel(data) {
       );
     }
   }
+  console.log("Full Mouse History Points: ");
   for (var i = 0; i < fullMouseHistoryPoints.length; i++) {
-    console.log(fullMouseHistoryPoints[i].x);
+    console.log([fullMouseHistoryPoints[i].x,fullMouseHistoryPoints[i].y]);
   }
+  console.log("Critical Points: ");
+  for (var i = 0; i < criticalPointsList.length; i++) {
+    console.log(criticalPointsList[i].x,criticalPointsList[i].y);
+  }
+  
   drawLinesFromHistory();
+  reDrawPoints();
+  stageWidth=criticalPointsList[0].width;
+  stageHeight=criticalPointsList[0].height;
+  console.log([stageHeight,stageWidth]);
+  setVisuals();
 }
 
 function sendPath() {
@@ -1116,3 +1164,17 @@ function sendPath() {
   var data = JSON.stringify({ path: data });
   xhr.send(data);
 }
+
+//acquires every global variable and returns a state object
+/*function getState() {
+
+}
+
+function State(this_stageHeight,this_stageWidth,this_fullMouseHistoryPoints,this_interval,this_toggled,this_dimensions) {
+    this.stageHeight = this_stageHeight;
+    this.stageWidth = this_stageWidth;
+    this.mousehistory = this_fullMouseHistoryPoints;
+    this.interval = this_interval;
+    this.isToggled = this_toggled;
+    this.haveDimensions = this_dimensions;
+}*/ //I'm Working on it!
