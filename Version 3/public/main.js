@@ -68,7 +68,7 @@ var isGridToggled = false;
 var displayGridOnLoad = true;
 
 function myFunction() {
-  console.log("i was here");
+  //console.log("i was here");
   //frequency = document.getElementById("frequency").value;
   removeGridIntervals();
   displayGrid();
@@ -489,35 +489,47 @@ function processExcel(data) {
     workbook.Sheets[summarySheet]
   );
 
+  for(let k = 1; k < workbook.SheetNames.length; k++){
+    isCritPoint = false;
+    var criticalPointCount = 0;
+    var pointCount = 0;
 
-  var pointSheet = workbook.SheetNames[1];
-  var dataRows = XLSX.utils.sheet_to_row_object_array(
-    workbook.Sheets[pointSheet]
-  );
+    var pointSheet = workbook.SheetNames[k];
+    var dataRows = XLSX.utils.sheet_to_row_object_array(
+      workbook.Sheets[pointSheet]
+    );
 
-  for (var i = 0; i < dataRows.length; i++) {
-    if (dataRows[i].mouseHistoryX == "XPos") {
-      i++;
-      isCritPoint = true;
+    for (var i = 0; i < dataRows.length; i++) {
+      if (dataRows[i].mouseHistoryX == "XPos") {
+        i++;
+        isCritPoint = true;
+      }
+      
+      if (isCritPoint == false) {
+        fullMouseHistoryPoints.push(
+          new myPoint(dataRows[i].mouseHistoryX, dataRows[i].mouseHistoryY)
+        );
+        pointCount += 1;
+      } else {
+        //error handling here (ensure each cue's first point is the same as the last cue's last point)
+        criticalPointsList.push(
+          new criticalPoint(
+            dataRows[i].mouseHistoryX + 5,
+            dataRows[i].mouseHistoryY + 5
+          )
+        );
+        criticalPointCount += 1;
+      }
     }
-    
-    if (isCritPoint == false) {
-      fullMouseHistoryPoints.push(
-        new myPoint(dataRows[i].mouseHistoryX, dataRows[i].mouseHistoryY)
-      );
-    } else {
-      criticalPointsList.push(
-        new criticalPoint(
-          dataRows[i].mouseHistoryX + 5,
-          dataRows[i].mouseHistoryY + 5
-        )
-      );
-    }
+    cuelist.push((criticalPointCount,pointCount));
   }
+  
   /*
   for (var i = 0; i < fullMouseHistoryPoints.length; i++) {
     console.log(fullMouseHistoryPoints[i].x);
   }*/
+  console.log("# of cues: " + String(cuelist.length));
+  cueSetup(cuelist.length);
   drawLinesFromHistory();
   reDrawPoints();
   console.log(summaryRows[0]);
@@ -1404,3 +1416,52 @@ function displayLine() {
 }
 //#endregion
 
+//#region Cue
+var cuelist = []; /*list of tuples of indexes of the last critical point and last mousea positon in each cue
+                  (index of last critical point, index of last mouse position)*/
+function cue(start,end){
+  this.start = start;
+  this.end = end;
+}
+
+function cueSetup(numCues){
+  var select = document.getElementById('cueDropdown');    
+
+  for (var i = 1; i<= numCues; i++){
+
+    var option = document.createElement('option');
+    option.value = i;
+    option.innerHTML = i;
+    select.options.add(option);
+  }
+}
+
+function highlightCue(){
+  document.getElementById();
+
+  context = null;
+  context = drawingCanvas.getContext("2d"); //set its dimentions to 2d
+  context.canvas.width = drawingCanvas.getBoundingClientRect().width;
+  context.canvas.height = drawingCanvas.getBoundingClientRect().height;
+
+  context.lineWidth = 2;
+  context.lineCap = "round";
+  context.strokeStyle = "#336466";
+
+  rightBound = cuelist[i-1][1];
+  leftBound = cuelist[i][1];
+  if (fullMouseHistoryPoints.length >= 2) {
+    for (var i = 0; i < fullMouseHistoryPoints.length - 1; i++) {
+      if (i == indexEdited && editLocation == "middle") {
+        i = i + 1;
+      }
+      context.beginPath(); // begin
+      context.moveTo(fullMouseHistoryPoints[i].x, fullMouseHistoryPoints[i].y);
+      context.lineTo(
+        fullMouseHistoryPoints[i + 1].x,
+        fullMouseHistoryPoints[i + 1].y
+      );
+      context.stroke();
+    }
+  }
+}
