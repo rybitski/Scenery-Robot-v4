@@ -73,7 +73,7 @@
           <i class="fa fa-pencil" onclick="callSideBar(2)" style='font-size:20px;color:white'></i>
           <i class="fa fa-map" onclick="callSideBar(3)" style='font-size:20px;color:white'></i>
           <i class="fa fa-cloud" onclick="callSideBar(4)" style="font-size:20px; color:white;"></i>
-          <span class="iconify" onclick="sendPath()" data-icon="mdi-robot" data-inline="false"
+          <span class="iconify" onclick="callSideBar(5)" data-icon="mdi-robot" data-inline="false"
             style="font-size:25px; color:white;"></span>
         </div>
 
@@ -266,9 +266,95 @@
             </div>
           </div>
         </div>
+
+        <!-- Robot Communication Tab -->
+        <div id="target" class="sideBarDetails">
+          <div class="baseSetting">
+            <!-- sendPath() -->
+            <h2>Robot Communication</h2>
+            <div class="robot-controls-container">
+              <div class="cues-navigation-menu">
+                <div class="arrow-container">
+                  <p class="arrow left" onclick=""></p>
+                </div>
+                <select class="cues-selection" id="cues-selection">
+                  <option value="full-path">Full Path</option>
+                  <option value="0">Cue 1</option>
+                  <option value="1">Cue 2</option>
+                </select>
+                <div class="arrow-container">
+                  <p class="arrow right" onclick=""></p>
+                </div>
+              </div>
+              <div class="cue-progression-select">
+                <h3>Progression</h3>
+                <select class="cue-progression" id="cue-progression">
+                  <option value="ascending">Ascending</option>
+                  <option value="descending">Descending</option>
+                </select>
+              </div>
+              <div class="lift-select">
+                <h3>Lift</h3>
+                <select class="lift" id="lift">
+                  <option value="stop">Stop</option>
+                  <option value="up">Up</option>
+                  <option value="down">Down</option>
+                </select>
+              </div>
+              <div class="io">
+                <h3>I/O 1</h3>
+                <label class="switch">
+                  <input onclick="" type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="io">
+                <h3>I/O 2</h3>
+                <label class="switch">
+                  <input onclick="" type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="io">
+                <h3>I/O 3</h3>
+                <label class="switch">
+                  <input onclick="" type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="io">
+                <h3>I/O 4</h3>
+                <label class="switch">
+                  <input onclick="" type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="io">
+                <h3>I/O 5</h3>
+                <label class="switch">
+                  <input onclick="" type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="control-source-select">
+                <h3>Source:</h3>
+                <select class="control-source" id="control-source">
+                  <option value="website">Website</option>
+                </select>
+              </div>
+            </div>
+            <div class="control-buttons-container">
+              <button class="update-control-button">Update Endpiont</button>
+              <div class="run-cue">
+                <h2>Run</h2>
+                <div class="box center" onclick="sendPath()"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </body>
-  </html>
-  <script src = "./public/main.js"></script>
-  
-  
+</body>
+
+</html>
+<script src=" ./public/main.js">
+</script>

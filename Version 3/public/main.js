@@ -38,7 +38,13 @@ document.getElementById("leftCont").onmouseover = function (event) {
 //#endregion
 
 //#region Send Path to Robot
+const box = document.querySelector('.box');
+box.addEventListener('click', (e)=>{
+  e.target.classList.toggle('pause');
+})
+
 function sendPath() {
+  console.log("called the send path method");
   var data = [];
   var rect = document.getElementById("drawingCanvas").getBoundingClientRect();
   for (var i = 0; i < criticalPointsList.length; i++) {
@@ -49,7 +55,7 @@ function sendPath() {
     data.push([realX, realY]);
   }
   var xhr = new XMLHttpRequest();
-  var url = "";
+  var url = "http://localhost:3000/input";
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-Type", "application/json");
   var data = JSON.stringify({ path: data });
@@ -57,13 +63,56 @@ function sendPath() {
 }
 //#endregion
 
-//#region Grid Stuff
-/*---------------------------------------------Begin Display Grid (via Toggle Button) Section----------------------------------------------------------------------------*/
+//#region Create Control Endpoint
 
-window.onload = function(){
+//default values of control variables
+var stop_movement = true;
+var cue_number = 1;
+var run_cue = false;
+var cue_progression = "ascending"; //or descending
+var next_cue = 2;
+var lift = "stop";
+var io_1 = false;
+var io_2 = false;
+var io_3 = false;
+var io_4 = false;
+var io_5 = false;
+var control_source = "website";
+
+//call the createControlEndpoint function on window load
+window.onload = function() {
+  createControlEndpoint();
   gridToggle();
+};
+
+function createControlEndpoint() {
+  console.log("called control endpoint");
+  var data = {
+  "Stop Movement": stop_movement,
+  "Cue Number": cue_number,
+  "Run Cue": run_cue,
+  "Next Cue": next_cue,
+  "Cue Progression": cue_progression,
+  "Lift": lift,
+  "IO 1": io_1,
+  "IO 2": io_2,
+  "IO 3": io_3,
+  "IO 4": io_4,
+  "IO 5": io_5,
+  "Control Source": control_source
+  }
+  var xhr = new XMLHttpRequest();
+  var url = "http://localhost:3000/control";
+  xhr.open("POST", url, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  var data = JSON.stringify({ path: data });
+  xhr.send(data);
 }
 
+//#endregion
+
+//#region Grid Stuff
+/*---------------------------------------------Begin Display Grid (via Toggle Button) Section----------------------------------------------------------------------------*/
 var isGridToggled = false;
 var displayGridOnLoad = true;
 
@@ -1186,11 +1235,10 @@ function sendFetchRequest(){
   }
 
   var xhr = new XMLHttpRequest();
-  var url = "http://localhost:3000/callPython";
+  var url = "http://localhost:3000/call-external-python-script";
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-Type", "application/json");
   var data = JSON.stringify({ path: data });
-  console.log(url);
   xhr.send(data);
   console.log("fetch request sent");
   //data - [];
@@ -1200,7 +1248,7 @@ function getData(){
   var getData = null;
   var delayInMilliseconds = 1000; //1 second
   var localTimer = setInterval(function() {
-      let url = "http://localhost:3000/callPython";
+      let url = "http://localhost:3000/b-spline-returned-data";
   fetch(url)
   .then(response=>response.text())
   .then(data=>{
