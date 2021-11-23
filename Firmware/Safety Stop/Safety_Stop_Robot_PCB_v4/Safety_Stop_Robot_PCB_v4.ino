@@ -112,7 +112,7 @@ void loop() {
     radio.read( &gotByte, 1 );
     radio.writeAckPayload(pipeNo, &gotByte, 1 );
     timeOUT = 0;                                  //message received, reset counter
- //  Serial.println(gotByte);
+    Serial.println(gotByte);
   }
 
 
@@ -132,8 +132,8 @@ void loop() {
   if(timeOUT < 3000){               //Prevent overflow
   timeOUT++;                        //increment counter
   }
- // Serial.println(timeOUT);
- delay(1);
+  Serial.println(timeOUT);
+  delay(1);
 
 }
 
