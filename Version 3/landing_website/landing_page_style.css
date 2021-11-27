@@ -22,7 +22,7 @@ header {
 
 .logo-container,
 .nav-links,
-.cart {
+.github {
 	display: flex;
 }
 
@@ -45,7 +45,7 @@ nav {
 	font-size: 18px;
 	text-decoration: none;
 }
-.cart {
+.github {
 	flex: 1;
 	justify-content: flex-end;
 }
