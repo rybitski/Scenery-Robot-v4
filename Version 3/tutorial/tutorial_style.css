@@ -7,7 +7,7 @@ body, html {
     color: #666
 }
 
-.tutorial, .pimg2, .pimg3 {
+.tutorial, .toolbar {
     position: relative;
     opacity: 0.70;
     background-position: center;
@@ -26,37 +26,37 @@ body, html {
     min-height: 100%;
 }
 
-.pimg2 {
+.toolbar {
     background-image: url("../tutorial/tutorial_images/tool_bar_highlight.png");
     min-height: 900px;
 }
 
-.pimg3 {
+.home {
     background-image: url("../tutorial/tutorial_images/home_button.png");
     min-height: 900px;
 }
 
-.pimg4 {
+.grid {
     background-image: url("../tutorial/tutorial_images/grid_button.png");
     min-height: 900px;
 }
 
-.pimg5 {
+.edit {
     background-image: url("../tutorial/tutorial_images/edit_button.png");
     min-height: 900px;
 }
 
-.pimg6 {
+.groundplan {
     background-image: url("../tutorial/tutorial_images/ground_plan.png");
     min-height: 900px;
 }
 
-.pimg7 {
+.workspace {
     background-image: url("../tutorial/tutorial_images/workspace_button.png");
     min-height: 900px;
 }
 
-.pimg8 {
+.robot-communication {
     background-image: url("../tutorial/tutorial_images/robot_communication_button.png");
     min-height: 900px;
 }
