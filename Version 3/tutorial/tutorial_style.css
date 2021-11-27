@@ -1,0 +1,98 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-size: 16px;
+    font-family: "Lato", sans-serif;
+    line-height: 1.8em;
+    color: #666
+}
+
+.tutorial, .pimg2, .pimg3 {
+    position: relative;
+    opacity: 0.70;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    /*
+    fixed=parallax
+    scroll=normal
+    */
+    background-attachment: scroll;
+}
+
+.tutorial {
+    background-image: url("../tutorial/tutorial_images/beginning_screen.png");
+    min-height: 100%;
+}
+
+.pimg2 {
+    background-image: url("../tutorial/tutorial_images/tool_bar_highlight.png");
+    min-height: 900px;
+}
+
+.pimg3 {
+    background-image: url("../tutorial/tutorial_images/home_button.png");
+    min-height: 900px;
+}
+
+.pimg4 {
+    background-image: url("../tutorial/tutorial_images/grid_button.png");
+    min-height: 900px;
+}
+
+.pimg5 {
+    background-image: url("../tutorial/tutorial_images/edit_button.png");
+    min-height: 900px;
+}
+
+.pimg6 {
+    background-image: url("../tutorial/tutorial_images/ground_plan.png");
+    min-height: 900px;
+}
+
+.pimg7 {
+    background-image: url("../tutorial/tutorial_images/workspace_button.png");
+    min-height: 900px;
+}
+
+.pimg8 {
+    background-image: url("../tutorial/tutorial_images/robot_communication_button.png");
+    min-height: 900px;
+}
+
+.section {
+    text-align: center;
+    padding: 50px 80px;
+}
+
+.section-light {
+    background-color: #f4f4f4;
+    color: #666;
+}
+
+.section-dark {
+    background-color: #282e34;
+    color: #ddd;
+}
+
+.ptext {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    color: #000;
+    font-size: 27px;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+}
+
+.ptext .border {
+    background-color: #111;
+    color: #fff; 
+    padding: 20px;
+}
+
+.ptext .border.trans {
+    background-color: transparent;
+}
