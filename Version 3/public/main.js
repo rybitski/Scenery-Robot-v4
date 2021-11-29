@@ -1442,18 +1442,19 @@ function cueSetup(numCues){
 
 function highlightCue(){
   var cue = document.getElementById('cueDropdown').value;
-
+  console.log(cue);
   context = null;
   context = drawingCanvas.getContext("2d"); //set its dimentions to 2d
   context.canvas.width = drawingCanvas.getBoundingClientRect().width;
   context.canvas.height = drawingCanvas.getBoundingClientRect().height;
 
   if (cue == -1){
-    leftBound = 0;
-    rightBound = i < fullMouseHistoryPoints.length - 1;
     context.lineWidth = 1;
     context.lineCap = "round";
     context.strokeStyle = "#336633";
+
+    leftBound = 0;
+    rightBound = fullMouseHistoryPoints.length;
   }
   else{
     context.lineWidth = 2;
@@ -1463,6 +1464,7 @@ function highlightCue(){
     leftBound = cuelist[cue-1][1];
     rightBound = cuelist[cue][1];
   }
+
   if (fullMouseHistoryPoints.length >= 2) {
     for (var i = leftBound; i < rightBound - 1; i++) {
       // if (i == indexEdited && editLocation == "middle") {
