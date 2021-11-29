@@ -531,7 +531,7 @@ function processExcel(data) {
   for (var i = 0; i < fullMouseHistoryPoints.length; i++) {
     console.log(fullMouseHistoryPoints[i].x);
   }*/
-  console.log("# of cues: " + String(cuelist.length));
+  console.log("# of cues: " + String(cuelist.length-1));
   cueSetup(cuelist.length);
   drawLinesFromHistory();
   reDrawPoints();
@@ -1441,6 +1441,7 @@ function cueSetup(numCues){
 }
 
 function highlightCue(){
+
   var cue = document.getElementById('cueDropdown').value;
   console.log(cue);
   context = null;
@@ -1454,23 +1455,37 @@ function highlightCue(){
     context.strokeStyle = "#336633";
 
     leftBound = 0;
-    rightBound = fullMouseHistoryPoints.length;
+    rightBound = fullMouseHistoryPoints.length-1;
   }
   else{
-    context.lineWidth = 2;
+    context.lineWidth = 2.5;
     context.lineCap = "round";
     context.strokeStyle = "#336466";
     
     leftBound = cuelist[cue-1][1];
     rightBound = cuelist[cue][1];
+    if (rightBound == fullMouseHistoryPoints.length){ //indexing error fix (see below)
+      rightBound--;
+    }
   }
 
   if (fullMouseHistoryPoints.length >= 2) {
-    for (var i = leftBound; i < rightBound - 1; i++) {
-      // if (i == indexEdited && editLocation == "middle") {
-      //   i = i + 1;
-      // }
-      //context.beginPath(); // begin
+    for (var i = leftBound; i < rightBound; i++) {
+      context.beginPath(); // begin drawing highlighted section
+      context.moveTo(fullMouseHistoryPoints[i].x, fullMouseHistoryPoints[i].y);
+      context.lineTo(
+        fullMouseHistoryPoints[i + 1].x, // index error
+        fullMouseHistoryPoints[i + 1].y
+      );
+      context.stroke();
+    }
+
+    context.lineWidth = 1;
+    context.lineCap = "round";
+    context.strokeStyle = "#336633";
+
+    for (var i = 0; i < leftBound; i++) {
+      context.beginPath(); // begin drawing unhighlighted section
       context.moveTo(fullMouseHistoryPoints[i].x, fullMouseHistoryPoints[i].y);
       context.lineTo(
         fullMouseHistoryPoints[i + 1].x,
@@ -1478,5 +1493,15 @@ function highlightCue(){
       );
       context.stroke();
     }
+    for (var i = rightBound; i < fullMouseHistoryPoints.length-1; i++) {
+      context.beginPath(); // begin drawing unhighlighted section
+      context.moveTo(fullMouseHistoryPoints[i].x, fullMouseHistoryPoints[i].y);
+      context.lineTo(
+        fullMouseHistoryPoints[i + 1].x,
+        fullMouseHistoryPoints[i + 1].y
+      );
+      context.stroke();
+    }
+
   }
 }
