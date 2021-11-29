@@ -267,9 +267,9 @@
             <div class="cueSystem">
               <h3>Cue Select</h3>
               <div class="workspaceInner">
-                <select id="cueDropdown"></select> 
-                <button class="highlightCue"
-                  onclick="highlightCue()">Highlight Cue</button>
+                <select id="cueDropdown" onchange="highlightCue()">
+                  <option value=-1 selected="selected">Full Path</option>
+                </select> 
               </div>
 
             </div>

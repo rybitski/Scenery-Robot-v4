@@ -489,10 +489,12 @@ function processExcel(data) {
     workbook.Sheets[summarySheet]
   );
 
+  var criticalPointCount = 0;
+  var pointCount = 0;
+
   for(let k = 1; k < workbook.SheetNames.length; k++){
     isCritPoint = false;
-    var criticalPointCount = 0;
-    var pointCount = 0;
+    
 
     var pointSheet = workbook.SheetNames[k];
     var dataRows = XLSX.utils.sheet_to_row_object_array(
@@ -521,7 +523,8 @@ function processExcel(data) {
         criticalPointCount += 1;
       }
     }
-    cuelist.push((criticalPointCount,pointCount));
+    console.log(criticalPointCount,pointCount);
+    cuelist.push([criticalPointCount,pointCount]);
   }
   
   /*
@@ -1419,6 +1422,7 @@ function displayLine() {
 //#region Cue
 var cuelist = []; /*list of tuples of indexes of the last critical point and last mousea positon in each cue
                   (index of last critical point, index of last mouse position)*/
+cuelist.push([0,0]); // we want the first critical point and mouse history index to be 0
 function cue(start,end){
   this.start = start;
   this.end = end;
@@ -1427,7 +1431,7 @@ function cue(start,end){
 function cueSetup(numCues){
   var select = document.getElementById('cueDropdown');    
 
-  for (var i = 1; i<= numCues; i++){
+  for (var i = 1; i< numCues; i++){ // starts at 2 because we have 1 defined in html file, and < numCues (and not <=) because we push [0,0] at the beginning and we want to ignore that
 
     var option = document.createElement('option');
     option.value = i;
@@ -1437,25 +1441,34 @@ function cueSetup(numCues){
 }
 
 function highlightCue(){
-  document.getElementById();
+  var cue = document.getElementById('cueDropdown').value;
 
   context = null;
   context = drawingCanvas.getContext("2d"); //set its dimentions to 2d
   context.canvas.width = drawingCanvas.getBoundingClientRect().width;
   context.canvas.height = drawingCanvas.getBoundingClientRect().height;
 
-  context.lineWidth = 2;
-  context.lineCap = "round";
-  context.strokeStyle = "#336466";
-
-  rightBound = cuelist[i-1][1];
-  leftBound = cuelist[i][1];
+  if (cue == -1){
+    leftBound = 0;
+    rightBound = i < fullMouseHistoryPoints.length - 1;
+    context.lineWidth = 1;
+    context.lineCap = "round";
+    context.strokeStyle = "#336633";
+  }
+  else{
+    context.lineWidth = 2;
+    context.lineCap = "round";
+    context.strokeStyle = "#336466";
+    
+    leftBound = cuelist[cue-1][1];
+    rightBound = cuelist[cue][1];
+  }
   if (fullMouseHistoryPoints.length >= 2) {
-    for (var i = 0; i < fullMouseHistoryPoints.length - 1; i++) {
-      if (i == indexEdited && editLocation == "middle") {
-        i = i + 1;
-      }
-      context.beginPath(); // begin
+    for (var i = leftBound; i < rightBound - 1; i++) {
+      // if (i == indexEdited && editLocation == "middle") {
+      //   i = i + 1;
+      // }
+      //context.beginPath(); // begin
       context.moveTo(fullMouseHistoryPoints[i].x, fullMouseHistoryPoints[i].y);
       context.lineTo(
         fullMouseHistoryPoints[i + 1].x,
