@@ -5,11 +5,35 @@ const port = process.env.PORT || 3000;
 app.use(express.static(__dirname + ""));
 app.use(express.json());
 
-var path = [];
 var pythonpath = 'python'
 if (process.platform === 'darwin'){
   pythonpath = '/usr/bin/python'
 }
+
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/main.html");
+  //res.send("Hello World!");
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
+});
+
+//#region Robot Control API's
+var control_object = [];
+
+app.post("/control", function (req, res) {
+  control_object = req.body.path;
+});
+
+app.get("/control", function (req, res) {
+  res.send(control_object);
+});
+//#endregion
+
+//#region Data Transfer API's
+var path = [];
+
 app.post("/input", function (req, res) {
   path = req.body.path;
 });
@@ -17,37 +41,16 @@ app.post("/input", function (req, res) {
 app.get("/input", function (req, res) {
   res.send(path);
 });
+//#endregion
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/main.html");
-  //res.send("Hello World!");
-});
-
-app.get("/main.html", function (req, res) {
-  //res.sendFile(__dirname + "/main.html");
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
-
-
-app.post("/callPython", function(req, res){
+//#region B-Spline API's
+app.post("/call-external-python-script", function(req, res){
+  console.log("inside call-external-python-script api");
   callWhenclicked(req.body.path);
 });
 
-var returnedData;
-app.get("/callPython", function (req, res){
- res.send(returnedData);
-});
-
-app.post("/groundPlan", function(req, res){
-  console.log("This is where we return the data");
-});
-
-//#region 
 function callWhenclicked(dataInput){
-  console.log("recieved data in api");
+  // console.log("recieved data in api");
   const{ spawn = () => null } = require('child_process');
   var data = dataInput;
 
@@ -63,4 +66,10 @@ function callWhenclicked(dataInput){
   childPython.on('close', (code) =>{
   });
 }
+
+var returnedData;
+app.get("/b-spline-returned-data", function (req, res){
+ res.send(returnedData);
+});
+
 //#endregion
