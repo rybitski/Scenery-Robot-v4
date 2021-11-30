@@ -217,6 +217,15 @@
                   <button id="cancelEditButton">Cancel Edit</button>
                 </div>
               </div>
+              <div class="cueSystem">
+                <h3>Cue Select</h3>
+                <div class="workspaceInner">
+                  <select id="cueDropdown" onchange="highlightCue()">
+                    <option value=-1 selected="selected">Full Path</option>
+                  </select> 
+                </div>
+                <button id="splitCue" onclick="splitCue()"> Create New Cue</button>
+              </div>
             </div>
           </div>
         </div>
@@ -263,15 +272,6 @@
                 <input style="display: none;" type="file" id="docpicker"
                   accept=".csv,application/vnd.ms-excel,.xlt,application/vnd.ms-excel,.xla,application/vnd.ms-excel,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xltx,application/vnd.openxmlformats-officedocument.spreadsheetml.template,.xlsm,application/vnd.ms-excel.sheet.macroEnabled.12,.xltm,application/vnd.ms-excel.template.macroEnabled.12,.xlam,application/vnd.ms-excel.addin.macroEnabled.12,.xlsb,application/vnd.ms-excel.sheet.binary.macroEnabled.12" />
               </div>
-            </div>
-            <div class="cueSystem">
-              <h3>Cue Select</h3>
-              <div class="workspaceInner">
-                <select id="cueDropdown" onchange="highlightCue()">
-                  <option value=-1 selected="selected">Full Path</option>
-                </select> 
-              </div>
-
             </div>
           </div>
         </div>
