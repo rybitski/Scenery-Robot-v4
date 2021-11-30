@@ -126,11 +126,11 @@
                     <option value="11">11 in</option>
                   </select>
                 </div>
-                <label>Start Y Coordinate:</label>
-                <div class="widthInput">
-                  <input id="stageWidth" value="" type="number" pattern="[0-9]+" />
+                <label>Start X Coordinate:</label>
+                <div class="lengthInput">
+                  <input id="startX" value="" type="number" pattern="[0-9]+" />
                   <span class="field__helper">feet</span>
-                  <select class="inches" id="inchesWidth">
+                  <select class="inches" id="inchesX">
                     <option value="0">0 in</option>
                     <option value="1">1 in</option>
                     <option value="2">2 in</option>
@@ -145,11 +145,11 @@
                     <option value="11">11 in</option>
                   </select>
                 </div>
-                <label>Start X Coordinate:</label>
+                <label>Start Y Coordinate:</label>
                 <div class="widthInput">
-                  <input id="stageWidth" value="" type="number" pattern="[0-9]+" />
+                  <input id="startY" value="" type="number" pattern="[0-9]+" />
                   <span class="field__helper">feet</span>
-                  <select class="inches" id="inchesWidth">
+                  <select class="inches" id="inchesY">
                     <option value="0">0 in</option>
                     <option value="1">1 in</option>
                     <option value="2">2 in</option>
@@ -165,7 +165,17 @@
                   </select>
                 </div>
               </form>
-              <!-- <div class="dragBar">
+              <div class="requireStartPositionToggleContainer">
+                <h4>Require Start Position</h4>
+                <div class="toggleAndButtons">
+                  <label class="switch">
+                    <input onclick="startPositionToggle()" type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+              <!-- <label>Draw Rate</label>
+              <div class="dragBar">
                 <div class="sliderInner">
                   <input type="range" min=".01" max="1" step=".01" value=".05" class="sldr" id="myRange"></input>
                 </div>
