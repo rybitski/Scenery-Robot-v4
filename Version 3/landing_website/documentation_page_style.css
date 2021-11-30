@@ -73,64 +73,6 @@ nav {
   transform: translateY(-15px);
 }
 
-.presentation {
-	display: flex;
-	width: 90%;
-	margin: auto;
-	min-height: 80vh;
-	align-items: center;
-}
-.introduction {
-	flex: 1;
-}
-.intro-text h1 {
-	font-size: 44px;
-	font-weight: 500;
-	background: linear-gradient(to right, #494964, #6f6f89);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-}
-.intro-text p {
-	margin-top: 5px;
-	font-size: 22px;
-	color: #585772;
-}
-.user-destination {
-	padding: 50px 0px 0px 0px;
-}
-.main-program {
-	border: 2px solid #ff8c00;
-	background: transparent;
-	color: #0066cc;
-	width: 150px;
-	height: 50px;
-	cursor: pointer;
-	font-size: 16px;
-}
-.start-tutorial {
-	background: #0066cc;
-	width: 150px;
-	height: 50px;
-	cursor: pointer;
-	font-size: 16px;
-	border: none;
-	color: #ff8c00;
-	margin: 30px 0px 0px 30px;
-}
-
-.cover {
-	flex: 1;
-	display: flex;
-	justify-content: center;
-	height: 60vh;
-}
-.cover img {
-	height: 100%;
-	filter: drop-shadow(0px 5px 3px black);
-	animation: drop 1.5s ease;
-}
-
-
 @keyframes drop {
 	0% {
 		opacity: 0;
