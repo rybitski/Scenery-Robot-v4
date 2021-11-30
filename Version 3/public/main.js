@@ -413,38 +413,46 @@ document.querySelector("#saveWork").addEventListener("click", () => {
   var summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
   wb.Sheets["Workspace Summary"] = summarySheet;
 
-  wb.SheetNames.push("Point Data");
-  
-  var wsData = [["mouseHistoryX", "mouseHistoryY"]];
-  for (var i = 0; i < fullMouseHistoryPoints.length; i++) {
-    var temp = [];
-    temp.push(fullMouseHistoryPoints[i].x);
-    temp.push(fullMouseHistoryPoints[i].y);
-    wsData.push(temp);
-  }
-  var criticalPointsHeading = [
-    "XPos",
-    "YPos",
-    "Width",
-    "Height",
-    "isClicked",
-    "Color",
-  ];
-  wsData.push(criticalPointsHeading);
+  for(var c = 1; c <= cuelist.length-1; c++){
+    var cueSheetName = "Cue " + c;
+    wb.SheetNames.push(cueSheetName);
+    
+    var leftBound = cuelist[c-1][1];
+    var rightBound = cuelist[c][1];
+    var wsData = [["mouseHistoryX", "mouseHistoryY"]];
+    for (var i = leftBound; i < rightBound; i++) {
+      var temp = [];
+      temp.push(fullMouseHistoryPoints[i].x);
+      temp.push(fullMouseHistoryPoints[i].y);
+      wsData.push(temp);
+    }
+    var criticalPointsHeading = [
+      "XPos",
+      "YPos",
+      "Width",
+      "Height",
+      "isClicked",
+      "Color",
+    ];
+    wsData.push(criticalPointsHeading);
 
-  for (var i = 0; i < criticalPointsList.length; i++) {
-    var temp = [];
-    temp.push(criticalPointsList[i].x);
-    temp.push(criticalPointsList[i].y);
-    temp.push(criticalPointsList[i].width);
-    temp.push(criticalPointsList[i].height);
-    temp.push(criticalPointsList[i].isClicked);
-    temp.push(criticalPointsList[i].color);
-    wsData.push(temp);
-  }
+    var leftCritBound = cuelist[c-1][0];
+    var rightCritBound = cuelist[c][0];
 
-  var ws = XLSX.utils.aoa_to_sheet(wsData);
-  wb.Sheets["Point Data"] = ws;
+    for (var i = leftCritBound; i < rightCritBound; i++) {
+      var temp = [];
+      temp.push(criticalPointsList[i].x);
+      temp.push(criticalPointsList[i].y);
+      temp.push(criticalPointsList[i].width);
+      temp.push(criticalPointsList[i].height);
+      temp.push(criticalPointsList[i].isClicked);
+      temp.push(criticalPointsList[i].color);
+      wsData.push(temp);
+    }
+
+    var ws = XLSX.utils.aoa_to_sheet(wsData);
+    wb.Sheets[cueSheetName] = ws;
+  }
   var wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
   function s2ab(s) {
     var buf = new ArrayBuffer(s.length);
