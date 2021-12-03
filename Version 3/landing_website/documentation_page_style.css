@@ -1,0 +1,75 @@
+* {
+	margin: 0px;
+	padding: 0px;
+	box-sizing: border-box;
+}
+
+
+/*inherit parent values (used to get rid of hyperlink syling)*/
+a {
+	color: inherit; /* blue colors for links too */
+	text-decoration: inherit; /* no underline */
+}
+
+body {
+	font-family: 'Poppins', sans-serif;
+
+}
+button {
+	font-family: 'Poppins', sans-serif;
+}
+
+header {
+	display: flex;
+	width: 90%;
+	height: 10vh;
+	margin: auto;
+	align-items: center;
+}
+
+.logo-container,
+.nav-links,
+.github {
+	display: flex;
+}
+
+.logo-container {
+	flex: 1;
+}
+.logo {
+	font-weight: 400;
+	margin: 5px;
+}
+nav {
+	flex: 2;
+}
+.nav-links {
+	justify-content: space-around;
+	list-style: none;
+}
+.nav-link {
+	color: #5f5f79;
+	font-size: 18px;
+	text-decoration: none;
+}
+
+/* color of text of navigation bar items when hovered over */
+.nav-link:hover { 
+	color: #03a9f4;  
+}
+
+.github {
+	flex: 1;
+	justify-content: flex-end;
+}
+
+.github a
+{
+  transition: 0.5s;
+}
+
+.github a:hover
+{
+  transform: translateY(-15px);
+}
+
