@@ -193,7 +193,7 @@
                   </label>
                 </div>
                 <div class="togglePointsArea">
-                  <h3>Critcal Points</h3>
+                  <h3>Critical Points</h3>
                   <label class="switch">
                     <input onclick="drawCoordinates()" type="checkbox" checked>
                     <span class="slider"></span>
@@ -217,14 +217,17 @@
                   <button id="cancelEditButton">Cancel Edit</button>
                 </div>
               </div>
-              <div class="cueSystem">
-                <h3>Cue Select</h3>
-                <div class="workspaceInner">
-                  <select id="cueDropdown" onchange="highlightCue()">
-                    <option value=-1 selected="selected">Full Path</option>
-                  </select> 
+              <div class="cueArea">
+                <h3>Cues</h3>
+                <div class="cueButtons">
+                  <button id="splitCue" onclick="splitCue()">New Cue</button>
+                  <button id="removeCue" onclick="removeCue()">Remove Cue</button>
                 </div>
-                <button id="splitCue" onclick="splitCue()"> Create New Cue</button>
+                <h3>Cue View</h3>
+                <label class="switch">
+                  <input onclick="cueView()" type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
               </div>
             </div>
           </div>
@@ -284,15 +287,14 @@
             <div class="robot-controls-container">
               <div class="cues-navigation-menu">
                 <div class="arrow-container">
-                  <p class="arrow left" onclick=""></p>
+                  <p class="arrow left" onclick="lastCue()"></p>
                 </div>
-                <select class="cues-selection" id="cues-selection">
-                  <option value="full-path">Full Path</option>
-                  <option value="0">Cue 1</option>
-                  <option value="1">Cue 2</option>
+                <select id="cueDropdown" onchange="highlightCue(document.getElementById('cueDropdown').value,'#00FFFF',false,true)">
+                  <option value=0 selected="selected">Full Path</option>
+                </select> 
                 </select>
                 <div class="arrow-container">
-                  <p class="arrow right" onclick=""></p>
+                  <p class="arrow right" onclick="nextCue()"></p>
                 </div>
               </div>
               <div class="cue-progression-select">
