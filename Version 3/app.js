@@ -26,6 +26,10 @@ app.post("/control", function (req, res) {
   control_object = req.body.path;
 });
 
+app.put("/control", function (req, res) {
+  control_object = req.body.path;
+});
+
 app.get("/control", function (req, res) {
   res.send(control_object);
 });
