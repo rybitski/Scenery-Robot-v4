@@ -217,18 +217,6 @@
                   <button id="cancelEditButton">Cancel Edit</button>
                 </div>
               </div>
-              <div class="cueArea">
-                <h3>Cues</h3>
-                <div class="cueButtons">
-                  <button id="splitCue" onclick="splitCue()">New Cue</button>
-                  <button id="removeCue" onclick="removeCue()">Remove Cue</button>
-                </div>
-                <h3>Cue View</h3>
-                <label class="switch">
-                  <input onclick="cueView()" type="checkbox" checked>
-                  <span class="slider"></span>
-                </label>
-              </div>
             </div>
           </div>
         </div>
@@ -281,6 +269,18 @@
 
         <!-- Robot Communication Tab -->
         <div id="target" class="sideBarDetails">
+          <div class="cueArea">
+            <!-- <h3>Cues</h3>
+            <div class="cueButtons">
+              <button id="splitCue" onclick="splitCue()">New Cue</button>
+              <button id="removeCue" onclick="removeCue()">Remove Cue</button>
+            </div> -->
+            <h3>Cue View</h3>
+            <label class="switch">
+              <input onclick="cueView()" type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
           <div class="baseSetting">
             <!-- sendPath() -->
             <h2>Robot Communication</h2>

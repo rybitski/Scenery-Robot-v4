@@ -62,8 +62,8 @@ function sendPath() {
   xhr.send(data);
 
   stop_movement = !stop_movement;
-  run_cue = !run_cue;
-  createControlEndpoint();
+  console.log(stop_movement);
+  updateControlEndpoint();
 }
 //#endregion
 
@@ -88,6 +88,30 @@ window.onload = function() {
   createControlEndpoint();
   gridToggle();
 };
+
+function updateControlEndpoint(){
+  console.log("called control endpoint");
+  var data = {
+  "Stop Movement": stop_movement,
+  "Cue Number": cue_number,
+  "Run Cue": run_cue,
+  "Next Cue": next_cue,
+  "Cue Progression": cue_progression,
+  "Lift": lift,
+  "IO 1": io_1,
+  "IO 2": io_2,
+  "IO 3": io_3,
+  "IO 4": io_4,
+  "IO 5": io_5,
+  "Control Source": control_source
+  }
+  var xhr = new XMLHttpRequest();
+  var url = "http://localhost:3000/control";
+  xhr.open("PUT", url, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  var data = JSON.stringify({ path: data });
+  xhr.send(data);
+}
 
 function createControlEndpoint() {
   console.log("called control endpoint");
