@@ -7,7 +7,7 @@ body, html {
     color: #666
 }
 
-.tutorial, .toolbar {
+.tutorial {
     position: relative;
     opacity: 0.70;
     background-position: center;
@@ -26,54 +26,9 @@ body, html {
     min-height: 100%;
 }
 
-.toolbar {
-    background-image: url("../tutorial/tutorial_images/tool_bar_highlight.png");
-    min-height: 900px;
-}
-
-.home {
-    background-image: url("../tutorial/tutorial_images/home_button.png");
-    min-height: 900px;
-}
-
-.grid {
-    background-image: url("../tutorial/tutorial_images/grid_button.png");
-    min-height: 900px;
-}
-
-.edit {
-    background-image: url("../tutorial/tutorial_images/edit_button.png");
-    min-height: 900px;
-}
-
-.groundplan {
-    background-image: url("../tutorial/tutorial_images/ground_plan.png");
-    min-height: 900px;
-}
-
-.workspace {
-    background-image: url("../tutorial/tutorial_images/workspace_button.png");
-    min-height: 900px;
-}
-
-.robot-communication {
-    background-image: url("../tutorial/tutorial_images/robot_communication_button.png");
-    min-height: 900px;
-}
-
 .section {
     text-align: center;
     padding: 50px 80px;
-}
-
-.section-light {
-    background-color: #f4f4f4;
-    color: #666;
-}
-
-.section-dark {
-    background-color: #282e34;
-    color: #ddd;
 }
 
 .ptext {
@@ -95,4 +50,40 @@ body, html {
 
 .ptext .border.trans {
     background-color: transparent;
+}
+
+
+
+
+.column {
+    float: left;
+    width: 25.0%;
+    margin-bottom: 16px;
+    padding: 0 8px;
+}
+  
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    margin: 8px;
+}
+
+.container {
+    padding: 0 16px;
+}
+
+
+.button {
+    border: none;
+    outline: 0;
+    display: inline-block;
+    padding: 8px;
+    color: white;
+    background-color: #000;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+}
+  
+.button:hover {
+    background-color: #555;
 }
