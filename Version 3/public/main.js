@@ -302,8 +302,8 @@ function startPositionToggle(){
     var startDimensions = getStageDimensionsInFeetInches("startX", "startY", "inchesX", "inchesY");
     var startX = startDimensions[0];
     var startY = startDimensions[1];
-    startXPixels = convertFeetInchesToPixels(startX);
-    startYPixels = convertFeetInchesToPixels(startY);
+    startXPixels = convertXInchesToPixels(startX);
+    startYPixels = convertYInchesToPixels(startY);
 
     // draw start rectangle
     ctx.beginPath();
@@ -724,8 +724,8 @@ document.addEventListener("mousedown", function (event) {
             var startDimensions = getStageDimensionsInFeetInches("startX", "startY", "inchesX", "inchesY");
             var startX = startDimensions[0];
             var startY = startDimensions[1];
-            startXPixels = convertFeetInchesToPixels(startX);
-            startYPixels = convertFeetInchesToPixels(startY);
+            startXPixels = convertXInchesToPixels(startX);
+            startYPixels = convertYInchesToPixels(startY);
 
             // generate required start rectangle
             var requiredStartLocation = new MyRect(
@@ -1312,9 +1312,15 @@ function convertXPixelsToInches(inputValInPixels) {
   return realX;
 }
 
-function convertFeetInchesToPixels(inputValInFeetInches) {
+function convertXInchesToPixels(inputValInFeetInches) {
   var rect = document.getElementById("drawingCanvas").getBoundingClientRect();
   var pixels = ((inputValInFeetInches / stageHeight) * rect.height).toFixed(2);
+  return pixels;
+}
+
+function convertYInchesToPixels(inputValInFeetInches) {
+  var rect = document.getElementById("drawingCanvas").getBoundingClientRect();
+  var pixels = (rect.height - ((inputValInFeetInches / stageHeight) * rect.height)).toFixed(2);
   return pixels;
 }
 
