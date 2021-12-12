@@ -50,7 +50,8 @@ function sendPath() {
   for (var i = 0; i < criticalPointsList.length; i++) {
     var tempx = criticalPointsList[i].x;
     var tempy = criticalPointsList[i].y;
-    var realX = ((tempx / rect.width) * stageWidth).toFixed(2);
+    // var realX = ((tempx / rect.width) * stageWidth).toFixed(2);
+    var realX = ((tempx/ rect.height)*stageWidth).toFixed(2);
     var realY = (stageHeight - (tempy / rect.height) * stageHeight).toFixed(2);
     data.push([realX, realY]);
   }
@@ -60,7 +61,8 @@ function sendPath() {
   xhr.setRequestHeader("Content-Type", "application/json");
   var data = JSON.stringify({ path: data });
   xhr.send(data);
-
+  
+  console.log("sent data");
   stop_movement = !stop_movement;
   console.log(stop_movement);
   updateControlEndpoint();
