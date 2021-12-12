@@ -38,13 +38,7 @@ document.getElementById("leftCont").onmouseover = function (event) {
 //#endregion
 
 //#region Send Path to Robot
-const box = document.querySelector('.box');
-box.addEventListener('click', (e)=>{
-  e.target.classList.toggle('pause');
-})
-
 function sendPath() {
-  console.log("called the send path method");
   var data = [];
   var rect = document.getElementById("drawingCanvas").getBoundingClientRect();
   for (var i = 0; i < criticalPointsList.length; i++) {
@@ -55,70 +49,26 @@ function sendPath() {
     data.push([realX, realY]);
   }
   var xhr = new XMLHttpRequest();
-  var url = "http://localhost:3000/input";
+  var url = "";
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-Type", "application/json");
   var data = JSON.stringify({ path: data });
   xhr.send(data);
 }
-//#endregion
-
-//#region Create Control Endpoint
-
-//default values of control variables
-var stop_movement = true;
-var cue_number = 1;
-var run_cue = false;
-var cue_progression = "ascending"; //or descending
-var next_cue = 2;
-var lift = "stop";
-var io_1 = false;
-var io_2 = false;
-var io_3 = false;
-var io_4 = false;
-var io_5 = false;
-var control_source = "website";
-
-//call the createControlEndpoint function on window load
-window.onload = function() {
-  createControlEndpoint();
-  gridToggle();
-};
-
-function createControlEndpoint() {
-  console.log("called control endpoint");
-  var data = {
-  "Stop Movement": stop_movement,
-  "Cue Number": cue_number,
-  "Run Cue": run_cue,
-  "Next Cue": next_cue,
-  "Cue Progression": cue_progression,
-  "Lift": lift,
-  "IO 1": io_1,
-  "IO 2": io_2,
-  "IO 3": io_3,
-  "IO 4": io_4,
-  "IO 5": io_5,
-  "Control Source": control_source
-  }
-  var xhr = new XMLHttpRequest();
-  var url = "http://localhost:3000/control";
-  xhr.open("POST", url, true);
-  xhr.setRequestHeader("Content-Type", "application/json");
-  var data = JSON.stringify({ path: data });
-  xhr.send(data);
-}
-
 //#endregion
 
 //#region Grid Stuff
 /*---------------------------------------------Begin Display Grid (via Toggle Button) Section----------------------------------------------------------------------------*/
+
+window.onload = function(){
+  gridToggle();
+}
+
 var isGridToggled = false;
 var displayGridOnLoad = true;
 
 function myFunction() {
   console.log("i was here");
-  //frequency = document.getElementById("frequency").value;
   removeGridIntervals();
   displayGrid();
 }
@@ -147,8 +97,6 @@ ctx.canvas.height = gridCanvas.getBoundingClientRect().height;
 
 gridWidth = gridCanvas.getBoundingClientRect().width;
 gridHeight = gridCanvas.getBoundingClientRect().height;
-
-var frequency = document.getElementById("frequency").value;
 
 function displayGrid() {
   clearGrid();
@@ -302,26 +250,31 @@ var stageWidth = 0;
 var stageHeight = 0;
 var isToggled = false;
 var haveDimensions = false;
-
+var requireStartDrawingPos = false; //variable for if user selects that the drawing must start in a specified location, default to false
 
 function newTrack() {
-  frequency = document.getElementById("frequency").value;
-
+  var w, h;
   stageWidth = parseInt(document.getElementById("stageWidth").value, 10);
   stageHeight = parseInt(document.getElementById("stageHeight").value, 10);
-  
+  w = "" + stageWidth + "' ";
+  h = "" + stageHeight + "' ";
 
   var stageWidthInch =
     parseInt(document.getElementById("inchesWidth").value, 10) / 12;
   var stageHeightInch =
     parseInt(document.getElementById("inchesHeight").value, 10) / 12;
 
+  w += document.getElementById("inchesWidth").value + '"';
+  h += document.getElementById("inchesHeight").value + '"';
+
   stageWidth += stageWidthInch;
   stageHeight += stageHeightInch;
   stageWidth = stageWidth.toFixed(2);
   stageHeight = stageHeight.toFixed(2);
 
-  
+  // interval = document.getElementById("myRange").value * 1000; // this will turn the seconds into milliseconds
+  // switch to constant draw rate
+  interval = 0.01 * 1000;
 
   if (
     document.getElementById("stageWidth").value == "" ||
@@ -329,56 +282,50 @@ function newTrack() {
   ) {
     alert("Please Enter Valid Dimensions");
   } else {
-    setVisuals();
-  }
-}
-
-function setVisuals() {
-  var w, h;
-
-  w = "" + dimensionHelper(stageWidth)[0] + "' " + dimensionHelper(stageWidth)[1] + "\"";
-  h = "" + + dimensionHelper(stageHeight)[0] + "' " + dimensionHelper(stageHeight)[1] + "\"";
-
-  interval = document.getElementById("myRange").value * 1000; // this will turn the seconds into milliseconds
-    
-  document.getElementById("widthDisplay").innerText = "Width of Stage: " + w;
-  document.getElementById("heightDisplay").innerText = "Depth of Stage: " + h;
-  document.getElementById("rateDisplay").innerText =
-    "Critical Point Rate: " + interval + " ms";
-
-  document.getElementById("frequency").value = frequency;
-  
-
-  if(!isNaN(stageWidth)&&!isNaN(stageHeight)){
-    console.log([stageWidth,stageHeight])
-    let widthinches = (stageWidth*12)%12;
-    let heightinches = (stageHeight*12)%12;
-    let widthfeet = Math.trunc(stageWidth)
-    let heightfeet = Math.trunc(stageHeight)
-    document.getElementById("stageWidth").value = widthfeet;
-    document.getElementById("stageHeight").value = heightfeet;
-    document.getElementById("inchesWidth").value = widthinches.toFixed(0);
-    document.getElementById("inchesHeight").value = heightinches.toFixed(0);
-    console.log([widthfeet,widthinches,heightfeet,heightinches])
+    document.getElementById("widthDisplay").innerText = "Width of Stage: " + w;
+    document.getElementById("heightDisplay").innerText = "Depth of Stage: " + h;
+    // document.getElementById("rateDisplay").innerText =
+    //   "Critical Point Rate: " + interval + " ms";
     haveDimensions = true;
     isValidToDraw = true;
     myFunction();
   }
 }
 
-function dimensionHelper(dimension){
-  inches = (dimension*12).toFixed(0) % 12;
-  feet = Math.trunc(dimension);
-  return [feet,inches];
+function startPositionToggle(){
+  if (requireStartDrawingPos == false) {
+    // if user hasn't entered start dimensions, send error
+    if (document.getElementById("startX").value == "" || document.getElementById("startY").value == "")
+      alert("Please Enter Start Dimensions");
+
+    // calculate required start position in pixels
+    var startDimensions = getStageDimensionsInFeetInches("startX", "startY", "inchesX", "inchesY");
+    var startX = startDimensions[0];
+    var startY = startDimensions[1];
+    startXPixels = convertXInchesToPixels(startX);
+    startYPixels = convertYInchesToPixels(startY);
+
+    // draw start rectangle
+    ctx.beginPath();
+    ctx.rect(startXPixels - 10, startYPixels - 10, 20, 20);
+    ctx.stroke()
+
+    requireStartDrawingPos = true;
+  } else {
+    // clear start rectangle
+    newTrack();
+    
+    requireStartDrawingPos = false;
+  }
 }
 
-var slider = document.getElementById("myRange");
-var output = document.getElementById("demo");
-output.innerHTML = slider.value + " sec";
+// var slider = document.getElementById("myRange");
+// var output = document.getElementById("demo");
+// output.innerHTML = slider.value + " sec";
 
-slider.oninput = function () {
-  output.innerHTML = this.value + " sec";
-};
+// slider.oninput = function () {
+//   output.innerHTML = this.value + " sec";
+// };
 
 
 /*----------------------------------------------End Verifying Canvas Dimension Input Section----------------------------------------------------------------------------*/
@@ -418,49 +365,25 @@ function reDrawPoints() {
 //#region Save Workspace Section
 
 document.querySelector("#saveWork").addEventListener("click", () => {
-  console.log(dimensionHelper(stageHeight));
-  console.log(dimensionHelper(stageWidth));
-
   for (var i = 0; i < fullMouseHistoryPoints.length; i++) {
     console.log(fullMouseHistoryPoints[i].x);
   }
 
   var wb = XLSX.utils.book_new();
   wb.Props = {
-    Title: "Scenery Robot Workspace",
+    Title: "SheetJS Tutorial",
     Subject: "Test",
-    Author: "University of Virginia Research Team",
-    CreatedDate: new Date(1819, 01, 25),
+    Author: "Red Stapler",
+    CreatedDate: new Date(2017, 12, 19),
   };
 
-  
-  wb.SheetNames.push("Workspace Summary");
-  var summaryData = [["StageWidth", "StageWidthInches","StageHeight","StageHeightInches","gridInterval","gridToggled","pointsToggled","groundPlan","groundPlanToggled","slider"]];
-  var widthVals = dimensionHelper(stageWidth);
-  var heightVals = dimensionHelper(stageHeight);
-  summaryData.push([]);
-  summaryData[1].push(widthVals[0]);
-  summaryData[1].push(widthVals[1]);
-  summaryData[1].push(heightVals[0]);
-  summaryData[1].push(heightVals[1]);
-  summaryData[1].push(frequency);
-  summaryData[1].push(isGridToggled);
-  summaryData[1].push(isPointsToggled);
-  summaryData[1].push("temp");
-  summaryData[1].push(groundPlanShowing);
-  summaryData[1].push("temp");
-
-  var summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
-  wb.Sheets["Workspace Summary"] = summarySheet;
-
-  wb.SheetNames.push("Point Data");
-  
-  var wsData = [["mouseHistoryX", "mouseHistoryY"]];
+  wb.SheetNames.push("Test Sheet");
+  var ws_data = [["mouseHistoryX", "mouseHistoryY"]];
   for (var i = 0; i < fullMouseHistoryPoints.length; i++) {
     var temp = [];
     temp.push(fullMouseHistoryPoints[i].x);
     temp.push(fullMouseHistoryPoints[i].y);
-    wsData.push(temp);
+    ws_data.push(temp);
   }
   var criticalPointsHeading = [
     "XPos",
@@ -470,7 +393,7 @@ document.querySelector("#saveWork").addEventListener("click", () => {
     "isClicked",
     "Color",
   ];
-  wsData.push(criticalPointsHeading);
+  ws_data.push(criticalPointsHeading);
 
   for (var i = 0; i < criticalPointsList.length; i++) {
     var temp = [];
@@ -480,11 +403,11 @@ document.querySelector("#saveWork").addEventListener("click", () => {
     temp.push(criticalPointsList[i].height);
     temp.push(criticalPointsList[i].isClicked);
     temp.push(criticalPointsList[i].color);
-    wsData.push(temp);
+    ws_data.push(temp);
   }
 
-  var ws = XLSX.utils.aoa_to_sheet(wsData);
-  wb.Sheets["Point Data"] = ws;
+  var ws = XLSX.utils.aoa_to_sheet(ws_data);
+  wb.Sheets["Test Sheet"] = ws;
   var wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
   function s2ab(s) {
     var buf = new ArrayBuffer(s.length);
@@ -524,32 +447,25 @@ function processExcel(data) {
   var workbook = XLSX.read(data, {
     type: "binary",
   });
-  var summarySheet = workbook.SheetNames[0];
-  var summaryRows = XLSX.utils.sheet_to_row_object_array(
-    workbook.Sheets[summarySheet]
+  var firstSheet = workbook.SheetNames[0];
+  var excelRows = XLSX.utils.sheet_to_row_object_array(
+    workbook.Sheets[firstSheet]
   );
-
-
-  var pointSheet = workbook.SheetNames[1];
-  var dataRows = XLSX.utils.sheet_to_row_object_array(
-    workbook.Sheets[pointSheet]
-  );
-
-  for (var i = 0; i < dataRows.length; i++) {
-    if (dataRows[i].mouseHistoryX == "XPos") {
+  for (var i = 0; i < excelRows.length; i++) {
+    if (excelRows[i].mouseHistoryX == "XPos") {
       i++;
       isCritPoint = true;
     }
-    
+
     if (isCritPoint == false) {
       fullMouseHistoryPoints.push(
-        new myPoint(dataRows[i].mouseHistoryX, dataRows[i].mouseHistoryY)
+        new myPoint(excelRows[i].mouseHistoryX, excelRows[i].mouseHistoryY)
       );
     } else {
       criticalPointsList.push(
         new criticalPoint(
-          dataRows[i].mouseHistoryX + 5,
-          dataRows[i].mouseHistoryY + 5
+          excelRows[i].mouseHistoryX + 5,
+          excelRows[i].mouseHistoryY + 5
         )
       );
     }
@@ -559,14 +475,6 @@ function processExcel(data) {
     console.log(fullMouseHistoryPoints[i].x);
   }*/
   drawLinesFromHistory();
-  reDrawPoints();
-  console.log(summaryRows[0]);
-  stageWidth=summaryRows[0].StageWidth+summaryRows[0].StageWidthInches/12;
-  stageHeight=summaryRows[0].StageHeight+summaryRows[0].StageHeightInches/12;
-  console.log([stageHeight,stageWidth]);
-  isGridToggled=summaryRows[0].gridToggled;
-  frequency=summaryRows[0].gridInterval;
-  setVisuals();
 }
 
 //#endregion
@@ -611,17 +519,17 @@ document.addEventListener("mousemove", function (event) {
     ((event.clientY - rect.top) / (rect.bottom - rect.top)) *
     drawingCanvas.height;
 
-  if (drawingCanvas.contains(event.target)) { //checks if mouse is within canvas
+  if (drawingCanvas.contains(event.target)) {
     if (startDrawing) {
-      if (startTimerOnce) { //tracks time to collect new point each cycle
+      if (startTimerOnce) {
         startTimerOnce = false;
         timer = setInterval(function () {
-          if (drawingLocation == "end") { // drawing at beginning, middle, or end -> add points to array accordingly
+          if (drawingLocation == "end") {
             criticalPointsList.push(
               new criticalPoint(currentXPos, currentYPos)
             );
           }
-          if (drawingLocation == "beginning") { 
+          if (drawingLocation == "beginning") {
             criticalPointsList.unshift(
               new criticalPoint(currentXPos, currentYPos)
             );
@@ -756,8 +664,8 @@ document.addEventListener("mousedown", function (event) {
 
   if (drawingCanvas.contains(event.target)) {
     if (haveDimensions == true) {
+      // if a line has already been drawn
       if (fullMouseHistoryPoints.length > 0) {
-        //if there is a list of old mouse locations
         //if there is a list of old mouse locations, we want to have the option to be able to edit at the front of the path and at the end
         var lastLocation = new MyRect(
           fullMouseHistoryPoints[fullMouseHistoryPoints.length - 1].x - 5,
@@ -802,10 +710,42 @@ document.addEventListener("mousedown", function (event) {
             setPosition(window.event);
           }
         }
+        // if a line hasn't been drawn yet
       } else {
-        startDrawing = true;
-        criticalPointsList.push(new criticalPoint(currentXPos, currentYPos)); //where the mouse was first pressed down, get a critical point
-        setPosition(window.event);
+          // if it doesn't require a starting position
+          if (!requireStartDrawingPos) {
+            startDrawing = true;  
+            criticalPointsList.push(new criticalPoint(currentXPos, currentYPos)); //where the mouse was first pressed down, get a critical point
+            setPosition(window.event);
+          }
+          // starting position required
+          else {
+            // calculate required start position in pixels
+            var startDimensions = getStageDimensionsInFeetInches("startX", "startY", "inchesX", "inchesY");
+            var startX = startDimensions[0];
+            var startY = startDimensions[1];
+            startXPixels = convertXInchesToPixels(startX);
+            startYPixels = convertYInchesToPixels(startY);
+
+            // generate required start rectangle
+            var requiredStartLocation = new MyRect(
+              startXPixels - 10,
+              startYPixels - 10,
+              20,
+              20
+            );
+
+            // check that user is drawing in start rectangle
+            if (requiredStartLocation.contains(currentXPos, currentYPos)) {
+              startDrawing = true;
+              criticalPointsList.unshift(
+                new criticalPoint(currentXPos, currentYPos)
+              );
+              drawingLocation = "beginning";
+              setPosition(window.event);
+            }
+
+          }
       }
     }
   }
@@ -1347,11 +1287,41 @@ function convertYPixelsToInches(inputValInPixels) {
   return realY;
 }
 
+// takes 2 string inputs that correspond to html ids and returns their dimensions in feet inches as a 1x2 array
+function getStageDimensionsInFeetInches(x, y, xInch, yInch) {
+  var returnX, returnY;
+  returnX = parseInt(document.getElementById(x).value, 10);
+  returnY = parseInt(document.getElementById(y).value, 10);
+  
+  var returnXInch =
+  parseInt(document.getElementById(xInch).value, 10) / 12;
+  var returnYInch =
+  parseInt(document.getElementById(yInch).value, 10) / 12;
+
+  returnX += returnXInch;
+  returnY += returnYInch;
+  returnX = returnX.toFixed(2);
+  returnY = returnY.toFixed(2);
+  console.log(returnX)
+  return [returnX, returnY];
+}
 
 function convertXPixelsToInches(inputValInPixels) {
   var rect = document.getElementById("drawingCanvas").getBoundingClientRect();
   var realX = ((inputValInPixels / rect.height) * stageHeight).toFixed(2);
   return realX;
+}
+
+function convertXInchesToPixels(inputValInFeetInches) {
+  var rect = document.getElementById("drawingCanvas").getBoundingClientRect();
+  var pixels = ((inputValInFeetInches / stageHeight) * rect.height).toFixed(2);
+  return pixels;
+}
+
+function convertYInchesToPixels(inputValInFeetInches) {
+  var rect = document.getElementById("drawingCanvas").getBoundingClientRect();
+  var pixels = (rect.height - ((inputValInFeetInches / stageHeight) * rect.height)).toFixed(2);
+  return pixels;
 }
 
 function displayPoints() {
@@ -1441,4 +1411,3 @@ function displayLine() {
   }
 }
 //#endregion
-

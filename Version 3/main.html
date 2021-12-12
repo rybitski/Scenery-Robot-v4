@@ -48,8 +48,8 @@
         <canvas id="gridCanvas" class="backgroundCanvas">
           <!-- This canvas stores grid lines-->
         </canvas>
-        <canvas id="groundPlanCanvas" class="gpCanvas">
-        </canvas>
+        <div id="groundPlanCanvasContainer" style="width: 100%; height: 100%">
+        </div>
         <canvas id="bSplineCanvas" class="bsCanvas">
         </canvas>
         <canvas id="drawingCanvas" class="topCanvas">
@@ -58,7 +58,7 @@
         <canvas id="pointsCanvas" class="pointsCanvas">
           <!-- This canvas is used to display the extracted points-->
         </canvas>
-        <canvas id="darkthemeCanvas" class="darkthemeCanvas">
+        <canvas id="darkthemeCanvas" class="darkthemeCanvas" style="background-color: transparent;">
           <!-- This canvas is used to display the extracted points-->
         </canvas>
         <div class="xAxis" id="xAxis">(0, 0)</div>
@@ -84,7 +84,7 @@
             <div class="displayDimensions">
               <h3 id="widthDisplay"> Width of Stage: </h3>
               <h3 id="heightDisplay"> Depth of Stage: </h3>
-              <h3 id="rateDisplay"> Critical Point Rate:</h3>
+              <!-- <h3 id="rateDisplay"> Critical Point Rate:</h3> -->
             </div>
             <div class="inputArea">
               <form>
@@ -126,13 +126,61 @@
                     <option value="11">11 in</option>
                   </select>
                 </div>
+                <label>Start X Coordinate:</label>
+                <div class="lengthInput">
+                  <input id="startX" value="" type="number" pattern="[0-9]+" />
+                  <span class="field__helper">feet</span>
+                  <select class="inches" id="inchesX">
+                    <option value="0">0 in</option>
+                    <option value="1">1 in</option>
+                    <option value="2">2 in</option>
+                    <option value="3">3 in</option>
+                    <option value="4">4 in</option>
+                    <option value="5">5 in</option>
+                    <option value="6">6 in</option>
+                    <option value="7">7 in</option>
+                    <option value="8">8 in</option>
+                    <option value="8">9 in</option>
+                    <option value="10">10 in</option>
+                    <option value="11">11 in</option>
+                  </select>
+                </div>
+                <label>Start Y Coordinate:</label>
+                <div class="widthInput">
+                  <input id="startY" value="" type="number" pattern="[0-9]+" />
+                  <span class="field__helper">feet</span>
+                  <select class="inches" id="inchesY">
+                    <option value="0">0 in</option>
+                    <option value="1">1 in</option>
+                    <option value="2">2 in</option>
+                    <option value="3">3 in</option>
+                    <option value="4">4 in</option>
+                    <option value="5">5 in</option>
+                    <option value="6">6 in</option>
+                    <option value="7">7 in</option>
+                    <option value="8">8 in</option>
+                    <option value="8">9 in</option>
+                    <option value="10">10 in</option>
+                    <option value="11">11 in</option>
+                  </select>
+                </div>
               </form>
+              <div class="requireStartPositionToggleContainer">
+                <h4>Require Start Position</h4>
+                <div class="toggleAndButtons">
+                  <label class="switch">
+                    <input onclick="startPositionToggle()" type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+              <!-- <label>Draw Rate</label>
               <div class="dragBar">
                 <div class="sliderInner">
                   <input type="range" min=".01" max="1" step=".01" value=".05" class="sldr" id="myRange"></input>
                 </div>
                 <p id="demo" class="sliderOutput"></p>
-              </div>
+              </div> -->
             </div>
             <div class="submitDimensions" onclick="newTrack()">
               <h5>Submit</h5>
@@ -230,7 +278,7 @@
               <div class="buttonAndToggleArea">
                 <button onclick="document.getElementById('groundPlanSelect').click();"
                   class="uploadGroundPlanButton">Select File</button>
-                <input style="display: none;"" type=" file" id="groundPlanSelect" accept=".dxf" />
+                <input style="display: none;" type="file" id="groundPlanSelect" accept=".dxf" />
               </div>
             </div>
             <div class="groundPlanContainer">
@@ -356,5 +404,5 @@
 </body>
 
 </html>
-<script src=" ./public/main.js">
-</script>
+<script src="./public/main.js"></script>
+<script src="./public/dist/groundPlan.js"></script>
