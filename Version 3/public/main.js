@@ -1225,16 +1225,12 @@ function convertToArray(input){
 
 //#region Ground Plan Stuff
 
-var groundPlanShowing = false;
-function startGroundPlan() {
-  var myelement = document.getElementById("groundPlanCanvas");
-  if (groundPlanShowing == false) {
-    groundPlanShowing = true;
-    myelement.style.visibility = "visible";
-  } else {
-    myelement.style.visibility = "hidden";
-    groundPlanShowing = false;
+var groundPlanShowing = true;
+function toggleGroundPlan() {
+  for (layer of dxfViewer.GetLayers()) {
+    dxfViewer.ShowLayer(layer.name, !groundPlanShowing)
   }
+  groundPlanShowing = !groundPlanShowing;
 }
 
 document.getElementById("groundPlanSelect").addEventListener("change", readGroundPlan);
