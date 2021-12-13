@@ -410,7 +410,7 @@ def test_follow():
     global enc2
     global enc1_prev
     global enc2_prev
-    global t_i, pos
+    global t_i, pos,
     global angle_prev
     #pure_angle
     path = path_generation()
