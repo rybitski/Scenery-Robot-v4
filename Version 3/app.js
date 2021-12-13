@@ -54,7 +54,12 @@ function callWhenclicked(dataInput){
   const{ spawn = () => null } = require('child_process');
   var data = dataInput;
 
+  //works on everyone but doesnt work for ayub
   const childPython = spawn(pythonpath, ['SplineDraw.py', JSON.stringify(data)]);
+
+  //Works on Ayubs Laptop strangely but doesnt work for everyone else
+  // const childPython = spawn(pythonpath, ['Version\ 3/SplineDraw.py', JSON.stringify(data)]);
+
   childPython.stdout.on('data', (data) =>{
     returnedData = data.toString('utf8');
   });
