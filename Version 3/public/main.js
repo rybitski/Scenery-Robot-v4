@@ -37,6 +37,12 @@ document.getElementById("leftCont").onmouseover = function (event) {
 /*---------------------------End Side Navbar Stuff---------------------*/
 //#endregion
 
+const box = document.querySelector('.box');
+box.addEventListener('click', (e)=>{
+  e.target.classList.toggle('pause');
+})
+
+var halt = true;
 //#region Send Path to Robot
 function sendPath() {
   var data = [];
@@ -44,16 +50,27 @@ function sendPath() {
   for (var i = 0; i < criticalPointsList.length; i++) {
     var tempx = criticalPointsList[i].x;
     var tempy = criticalPointsList[i].y;
-    var realX = ((tempx / rect.width) * stageWidth).toFixed(2);
+    // var realX = ((tempx / rect.width) * stageWidth).toFixed(2);
+    var realX = ((tempx/ rect.height)*stageWidth).toFixed(2);
     var realY = (stageHeight - (tempy / rect.height) * stageHeight).toFixed(2);
     data.push([realX, realY]);
   }
+
+  halt = !halt;
+  console.log(halt);
+
+  var finalData = [halt,data];
+
   var xhr = new XMLHttpRequest();
-  var url = "";
+  var url = "http://localhost:3000/input";
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-Type", "application/json");
-  var data = JSON.stringify({ path: data });
-  xhr.send(data);
+  var finalData = JSON.stringify({ path: finalData });
+  xhr.send(finalData);
+  
+  console.log("sent data");
+  
+  //updateControlEndpoint();
 }
 //#endregion
 
@@ -64,11 +81,65 @@ window.onload = function(){
   gridToggle();
 }
 
+// function updateControlEndpoint(){
+//   console.log("called control endpoint");
+//   var data = {
+//   "Stop Movement": stop_movement,
+//   "Cue Number": cue_number,
+//   "Run Cue": run_cue,
+//   "Next Cue": next_cue,
+//   "Cue Progression": cue_progression,
+//   "Lift": lift,
+//   "IO 1": io_1,
+//   "IO 2": io_2,
+//   "IO 3": io_3,
+//   "IO 4": io_4,
+//   "IO 5": io_5,
+//   "Control Source": control_source
+//   }
+//   var xhr = new XMLHttpRequest();
+//   var url = "http://localhost:3000/control";
+//   xhr.open("PUT", url, true);
+//   xhr.setRequestHeader("Content-Type", "application/json");
+//   var data = JSON.stringify({ path: data });
+//   xhr.send(data);
+// }
+
+// function createControlEndpoint() {
+//   console.log("called control endpoint");
+//   var data = {
+//   "Stop Movement": stop_movement,
+//   "Cue Number": cue_number,
+//   "Run Cue": run_cue,
+//   "Next Cue": next_cue,
+//   "Cue Progression": cue_progression,
+//   "Lift": lift,
+//   "IO 1": io_1,
+//   "IO 2": io_2,
+//   "IO 3": io_3,
+//   "IO 4": io_4,
+//   "IO 5": io_5,
+//   "Control Source": control_source
+//   }
+//   var xhr = new XMLHttpRequest();
+//   var url = "http://localhost:3000/control";
+//   xhr.open("POST", url, true);
+//   xhr.setRequestHeader("Content-Type", "application/json");
+//   var data = JSON.stringify({ path: data });
+//   xhr.send(data);
+// }
+
+
+//#endregion
+
+//#region Grid Stuff
+/*---------------------------------------------Begin Display Grid (via Toggle Button) Section----------------------------------------------------------------------------*/
 var isGridToggled = false;
 var displayGridOnLoad = true;
 
 function myFunction() {
-  console.log("i was here");
+  //console.log("i was here");
+  //frequency = document.getElementById("frequency").value;
   removeGridIntervals();
   displayGrid();
 }
@@ -86,6 +157,16 @@ function gridToggle(){
   }
 }
 
+function setGridToggle(status){
+  gridSwitch = document.getElementById("gridSwitch");
+  gridToggleStatus = gridSwitch.checked;
+
+  if (gridToggleStatus == status){
+    gridSwitch.checked = !status;
+    gridToggle();
+    console.log(status);
+  }
+}
 
 //The following code draws a grid on a canvas
 //in order to get the grid to turn on and off, we will have to stack two canvas' on top of each other:
@@ -137,13 +218,13 @@ function clearGrid() {
 xAxisArray = [];
 yAxisArray = [];
 function displayGridIntervals() {
-  var axisFrequency = 0;
-  if(displayGridOnLoad == true){
-    axisFrequency = .25;
-    displayGridOnLoad = false;
-  }else{
-    axisFrequency = document.getElementById("frequency").value;
-  }
+  var axisFrequency = document.getElementById("frequency").value;
+  // if(displayGridOnLoad == true){
+  //   axisFrequency = .25;
+  //   displayGridOnLoad = false;
+  // }else{
+  //   axisFrequency = document.getElementById("frequency").value;
+  // }
   
   yAxisArray.length = Math.floor(1 / axisFrequency);
   var intervalRate = displayYIntervals();
@@ -319,6 +400,38 @@ function startPositionToggle(){
   }
 }
 
+function setVisuals() {
+  var w, h;
+
+  w = "" + dimensionHelper(stageWidth)[0] + "' " + dimensionHelper(stageWidth)[1] + "\"";
+  h = "" + + dimensionHelper(stageHeight)[0] + "' " + dimensionHelper(stageHeight)[1] + "\"";
+
+  document.getElementById("widthDisplay").innerText = "Width of Stage: " + w;
+  document.getElementById("heightDisplay").innerText = "Depth of Stage: " + h;
+  document.getElementById("frequency").value = frequency;
+  
+  if(!isNaN(stageWidth)&&!isNaN(stageHeight)){
+    console.log([stageWidth,stageHeight])
+    let widthinches = (stageWidth*12)%12;
+    let heightinches = (stageHeight*12)%12;
+    let widthfeet = Math.trunc(stageWidth)
+    let heightfeet = Math.trunc(stageHeight)
+    document.getElementById("stageWidth").value = widthfeet;
+    document.getElementById("stageHeight").value = heightfeet;
+    document.getElementById("inchesWidth").value = widthinches.toFixed(0);
+    document.getElementById("inchesHeight").value = heightinches.toFixed(0);
+    console.log([widthfeet,widthinches,heightfeet,heightinches])
+    haveDimensions = true;
+    isValidToDraw = true;
+    myFunction();
+  }
+}
+
+function dimensionHelper(dimension){
+  inches = (dimension*12).toFixed(0) % 12;
+  feet = Math.trunc(dimension);
+  return [feet,inches];
+}
 // var slider = document.getElementById("myRange");
 // var output = document.getElementById("demo");
 // output.innerHTML = slider.value + " sec";
@@ -365,49 +478,85 @@ function reDrawPoints() {
 //#region Save Workspace Section
 
 document.querySelector("#saveWork").addEventListener("click", () => {
+  var popcue = false;
+  if(fullMouseHistoryPoints.length > 0 && cuelist.length == 1){
+    cuelist.push(new Array(criticalPointsList.length - 1, fullMouseHistoryPoints.length - 1));
+    popcue = true;
+    console.log(cuelist);
+  }
+
   for (var i = 0; i < fullMouseHistoryPoints.length; i++) {
     console.log(fullMouseHistoryPoints[i].x);
   }
 
   var wb = XLSX.utils.book_new();
   wb.Props = {
-    Title: "SheetJS Tutorial",
+    Title: "Scenery Robot Workspace",
     Subject: "Test",
-    Author: "Red Stapler",
-    CreatedDate: new Date(2017, 12, 19),
+    Author: "University of Virginia Research Team",
+    CreatedDate: new Date(1819, 01, 25),
   };
+  
+  wb.SheetNames.push("Workspace Summary");
+  var summaryData = [["StageWidth", "StageWidthInches","StageHeight","StageHeightInches","gridInterval","gridToggled","pointsToggled","groundPlan","groundPlanToggled","slider"]];
+  var widthVals = dimensionHelper(stageWidth);
+  var heightVals = dimensionHelper(stageHeight);
+  summaryData.push([]);
+  summaryData[1].push(widthVals[0]);
+  summaryData[1].push(widthVals[1]);
+  summaryData[1].push(heightVals[0]);
+  summaryData[1].push(heightVals[1]);
+  summaryData[1].push(frequency);
+  summaryData[1].push(isGridToggled);
+  summaryData[1].push(isPointsToggled);
+  summaryData[1].push("temp");
+  summaryData[1].push(groundPlanShowing);
+  summaryData[1].push("temp");
 
-  wb.SheetNames.push("Test Sheet");
-  var ws_data = [["mouseHistoryX", "mouseHistoryY"]];
-  for (var i = 0; i < fullMouseHistoryPoints.length; i++) {
-    var temp = [];
-    temp.push(fullMouseHistoryPoints[i].x);
-    temp.push(fullMouseHistoryPoints[i].y);
-    ws_data.push(temp);
+  var summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+  wb.Sheets["Workspace Summary"] = summarySheet;
+
+  for(var c = 1; c <= cuelist.length-1; c++){
+    var cueSheetName = "Cue " + c;
+    wb.SheetNames.push(cueSheetName);
+    
+    var leftBound = cuelist[c-1][1];
+    var rightBound = cuelist[c][1];
+
+    var wsData = [["mouseHistoryX", "mouseHistoryY"]];
+    for (var i = leftBound; i < rightBound; i++) {
+      var temp = [];
+      temp.push(fullMouseHistoryPoints[i].x);
+      temp.push(fullMouseHistoryPoints[i].y);
+      wsData.push(temp);
+    }
+    var criticalPointsHeading = [
+      "XPos",
+      "YPos",
+      "Width",
+      "Height",
+      "isClicked",
+      "Color",
+    ];
+    wsData.push(criticalPointsHeading);
+
+    var leftCritBound = cuelist[c-1][0];
+    var rightCritBound = cuelist[c][0];
+
+    for (var i = leftCritBound; i < rightCritBound; i++) {
+      var temp = [];
+      temp.push(criticalPointsList[i].x);
+      temp.push(criticalPointsList[i].y);
+      temp.push(criticalPointsList[i].width);
+      temp.push(criticalPointsList[i].height);
+      temp.push(criticalPointsList[i].isClicked);
+      temp.push(criticalPointsList[i].color);
+      wsData.push(temp);
+    }
+
+    var ws = XLSX.utils.aoa_to_sheet(wsData);
+    wb.Sheets[cueSheetName] = ws;
   }
-  var criticalPointsHeading = [
-    "XPos",
-    "YPos",
-    "Width",
-    "Height",
-    "isClicked",
-    "Color",
-  ];
-  ws_data.push(criticalPointsHeading);
-
-  for (var i = 0; i < criticalPointsList.length; i++) {
-    var temp = [];
-    temp.push(criticalPointsList[i].x);
-    temp.push(criticalPointsList[i].y);
-    temp.push(criticalPointsList[i].width);
-    temp.push(criticalPointsList[i].height);
-    temp.push(criticalPointsList[i].isClicked);
-    temp.push(criticalPointsList[i].color);
-    ws_data.push(temp);
-  }
-
-  var ws = XLSX.utils.aoa_to_sheet(ws_data);
-  wb.Sheets["Test Sheet"] = ws;
   var wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
   function s2ab(s) {
     var buf = new ArrayBuffer(s.length);
@@ -419,6 +568,9 @@ document.querySelector("#saveWork").addEventListener("click", () => {
     new Blob([s2ab(wbout)], { type: "application/octet-stream" }),
     "Workspace.xlsx"
   );
+  if(popcue){
+    cuelist.pop();
+  }
 });
 
 //#endregion
@@ -447,34 +599,65 @@ function processExcel(data) {
   var workbook = XLSX.read(data, {
     type: "binary",
   });
-  var firstSheet = workbook.SheetNames[0];
-  var excelRows = XLSX.utils.sheet_to_row_object_array(
-    workbook.Sheets[firstSheet]
+  var summarySheet = workbook.SheetNames[0];
+  var summaryRows = XLSX.utils.sheet_to_row_object_array(
+    workbook.Sheets[summarySheet]
   );
-  for (var i = 0; i < excelRows.length; i++) {
-    if (excelRows[i].mouseHistoryX == "XPos") {
-      i++;
-      isCritPoint = true;
-    }
 
-    if (isCritPoint == false) {
-      fullMouseHistoryPoints.push(
-        new myPoint(excelRows[i].mouseHistoryX, excelRows[i].mouseHistoryY)
-      );
-    } else {
-      criticalPointsList.push(
-        new criticalPoint(
-          excelRows[i].mouseHistoryX + 5,
-          excelRows[i].mouseHistoryY + 5
-        )
-      );
+  var criticalPointCount = 0;
+  var pointCount = 0;
+
+  for(let k = 1; k < workbook.SheetNames.length; k++){
+    isCritPoint = false;
+    
+
+    var pointSheet = workbook.SheetNames[k];
+    var dataRows = XLSX.utils.sheet_to_row_object_array(
+      workbook.Sheets[pointSheet]
+    );
+
+    for (var i = 0; i < dataRows.length; i++) {
+      if (dataRows[i].mouseHistoryX == "XPos") {
+        i++;
+        isCritPoint = true;
+      }
+      
+      if (isCritPoint == false) {
+        fullMouseHistoryPoints.push(
+          new myPoint(dataRows[i].mouseHistoryX, dataRows[i].mouseHistoryY)
+        );
+        pointCount += 1;
+      } else {
+        //error handling here (ensure each cue's first point is the same as the last cue's last point)
+        criticalPointsList.push(
+          new criticalPoint(
+            dataRows[i].mouseHistoryX + 5,
+            dataRows[i].mouseHistoryY + 5
+          )
+        );
+        criticalPointCount += 1;
+      }
     }
+    console.log(criticalPointCount,pointCount);
+    cuelist.push([criticalPointCount,pointCount]);
   }
+  
   /*
   for (var i = 0; i < fullMouseHistoryPoints.length; i++) {
     console.log(fullMouseHistoryPoints[i].x);
   }*/
+  console.log("# of cues: " + String(cuelist.length-1));
+  cueSetup(cuelist.length);
   drawLinesFromHistory();
+  reDrawPoints();
+  console.log(summaryRows[0]);
+  stageWidth=summaryRows[0].StageWidth+summaryRows[0].StageWidthInches/12;
+  stageHeight=summaryRows[0].StageHeight+summaryRows[0].StageHeightInches/12;
+  console.log([stageHeight,stageWidth]);
+  frequency=summaryRows[0].gridInterval;
+  setGridToggle(summaryRows[0].gridToggled);
+
+  setVisuals();
 }
 
 //#endregion
@@ -528,15 +711,24 @@ document.addEventListener("mousemove", function (event) {
             criticalPointsList.push(
               new criticalPoint(currentXPos, currentYPos)
             );
+            fullMouseHistoryPoints.push( // add critical point to mouse history
+              new myPoint(currentXPos, currentYPos)
+            );
           }
           if (drawingLocation == "beginning") {
             criticalPointsList.unshift(
               new criticalPoint(currentXPos, currentYPos)
             );
+            fullMouseHistoryPoints.unshift( // add critical point to mouse history
+              new myPoint(currentXPos, currentYPos)
+            );
           }
           if (drawingLocation == "middle") {
             middleFragmentArrayCriticalPoints.push(
               new criticalPoint(currentXPos, currentYPos)
+            );
+            middleFragmentArray.push( // add critical point to mouse history
+              new myPoint(currentXPos, currentYPos)
             );
           }
         }, interval);
@@ -559,11 +751,17 @@ document.onmouseup = function () {
         drawingCanvas.height;
       if (drawingLocation == "end") {
         criticalPointsList.push(new criticalPoint(currentXPos, currentYPos));
+        fullMouseHistoryPoints.push( // add critical point to mouse history
+          new myPoint(currentXPos, currentYPos)
+        );
       }
       if (drawingLocation == "beginning") {
         criticalPointsList.unshift(new criticalPoint(currentXPos, currentYPos));
+        fullMouseHistoryPoints.unshift( // add critical point to mouse history
+          new myPoint(currentXPos, currentYPos)
+        );
       }
-      if (drawingLocation == "middle") {
+      if (drawingLocation == "middle") {  // come back to implement adding critical point to mouse history
         var tempted = new MyRect(
           preEditFullMouseHistoryPoints[middleEditTwo].x - 5,
           preEditFullMouseHistoryPoints[middleEditTwo].y - 5,
@@ -698,6 +896,9 @@ document.addEventListener("mousedown", function (event) {
             criticalPointsList.push(
               new criticalPoint(currentXPos, currentYPos)
             );
+            fullMouseHistoryPoints.push( // add critical point to mouse history
+              new myPoint(currentXPos, currentYPos)
+            );
             drawingLocation = "end";
             setPosition(window.event);
           }
@@ -705,6 +906,9 @@ document.addEventListener("mousedown", function (event) {
             startDrawing = true;
             criticalPointsList.unshift(
               new criticalPoint(currentXPos, currentYPos)
+            );
+            fullMouseHistoryPoints.unshift( // add critical point to mouse history
+              new myPoint(currentXPos, currentYPos)
             );
             drawingLocation = "beginning";
             setPosition(window.event);
@@ -857,7 +1061,7 @@ function criticalPoint(x, y) {
 
   this.draw = function (ctx) {
     ctx.strokeStyle = this.color;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.rect(this.x, this.y, this.width, this.height);
     ctx.stroke();
@@ -1407,3 +1611,171 @@ function displayLine() {
   }
 }
 //#endregion
+
+//#region Cue
+var cuelist = []; /*list of tuples of indexes of the last critical point and last mousea positon in each cue
+                  (index of last critical point, index of last mouse position)*/
+cuelist.push([0,0]); // we want the first critical point and mouse history index to be 0
+function cue(start,end){
+  this.start = start;
+  this.end = end;
+}
+
+function cueSetup(numCues){
+  var select = document.getElementById('cueDropdown');    
+
+  for (var i = 1; i < numCues; i++){ // starts at 2 because we have 1 defined in html file, and < numCues (and not <=) because we push [0,0] at the beginning and we want to ignore that
+
+    var option = document.createElement('option');
+    option.value = i;
+    option.innerHTML = "Cue " + String(i);
+    select.options.add(option);
+    console.log(option.innerHTML);
+  }
+}
+
+
+function nextCue(){
+  let next = (parseInt((document.getElementById('cueDropdown').value))+1)%(cuelist.length);
+  highlightCue(next,"#00FFFF",false,true);
+  document.getElementById('cueDropdown').value = next;
+}
+
+function lastCue(){
+  let prev = (parseInt((document.getElementById('cueDropdown').value))+(cuelist.length-1))%(cuelist.length);
+  highlightCue(prev,"#00FFFF",false,true);
+  document.getElementById('cueDropdown').value = prev;
+}
+
+function highlightCue(cue,color,onlyThisCue,clean){
+  //var cue = document.getElementById('cueDropdown').value;
+  if (cue > cuelist.length-1){ // if right button pressed when already on last cue, go to full path
+    cue = 0;
+  }
+  else if (cue < 0){ // if left button pressed when already on full path, go to last cue
+    cue = cuelist.length-1;
+  }
+  //document.getElementById('cueDropdown').value = cue;
+  
+
+  if(clean){
+    context = null;
+    context = drawingCanvas.getContext("2d"); //set its dimentions to 2d
+    context.canvas.width = drawingCanvas.getBoundingClientRect().width;
+    context.canvas.height = drawingCanvas.getBoundingClientRect().height;
+  }
+
+  if (cue == 0){
+    context.lineWidth = 1;
+    context.lineCap = "round";
+    context.strokeStyle = "#336633";
+
+    leftBound = 0;
+    rightBound = fullMouseHistoryPoints.length-1;
+  }
+  else{
+    context.lineWidth = 2.5;
+    context.lineCap = "round";
+    context.strokeStyle = color;
+    
+    leftBound = cuelist[cue-1][1];
+    rightBound = cuelist[cue][1];
+    if (rightBound == fullMouseHistoryPoints.length){ //indexing error fix (see below)
+      rightBound--;
+    }
+   
+  }
+
+  if (fullMouseHistoryPoints.length >= 2) {
+    for (var i = leftBound; i < rightBound; i++) {
+      context.beginPath(); // begin drawing highlighted section
+      context.moveTo(fullMouseHistoryPoints[i].x, fullMouseHistoryPoints[i].y);
+      context.lineTo(
+        fullMouseHistoryPoints[i + 1].x, // index error
+        fullMouseHistoryPoints[i + 1].y
+      );
+      context.stroke();
+    }
+    if(!onlyThisCue){
+      context.lineWidth = 1;
+      context.lineCap = "round";
+      context.strokeStyle = "#336633";
+
+      for (var i = 0; i < leftBound; i++) {
+        context.beginPath(); // begin drawing unhighlighted section
+        context.moveTo(fullMouseHistoryPoints[i].x, fullMouseHistoryPoints[i].y);
+        context.lineTo(
+          fullMouseHistoryPoints[i + 1].x,
+          fullMouseHistoryPoints[i + 1].y
+        );
+        context.stroke();
+      }
+      for (var i = rightBound; i < fullMouseHistoryPoints.length-1; i++) {
+        context.beginPath(); // begin drawing unhighlighted section
+        context.moveTo(fullMouseHistoryPoints[i].x, fullMouseHistoryPoints[i].y);
+        context.lineTo(
+          fullMouseHistoryPoints[i + 1].x,
+          fullMouseHistoryPoints[i + 1].y
+        );
+        context.stroke();
+      }
+    }
+  }
+}
+var colors = ["#FF0000", "#00FF00", "#0000FF","#FFFF00", "#00FFFF", "#FF00FF", "#800000", "#808000",  "#008000", "#800080", "#008080", "#000080"];
+var cueViewOn = false;
+function cueView(){
+  var popcue = false;
+  if(fullMouseHistoryPoints.length > 0 && cuelist.length == 1){
+    cuelist.push(new Array(criticalPointsList.length - 1, fullMouseHistoryPoints.length - 1));
+    popcue = true;
+    console.log(cuelist[1]);
+  }
+  if(!cueViewOn){
+    highlightCue(cuelist.length-1,colors[(cuelist.length-1)%colors.length],true,true);
+    for(var i = cuelist.length-2; i > 0; i--){
+      highlightCue(i,colors[i%colors.length],true,false);
+    }
+    cueViewOn = true;
+  }
+  else{
+    highlightCue(document.getElementById('cueDropdown').value,'#00FFFF',false,true);
+    cueViewOn = false;
+  }
+  if(popcue){
+    cuelist.pop();
+  }
+}
+
+function splitCue(){
+  if (numPointsSelected > 1){
+    console.log("too many points selected");
+    return;
+  }
+  else if (numPointsSelected <= 0){
+    console.log("please select a points");
+    return;
+  }
+  else if (cuelist.includes(criticalPointsList.indexOf(pointsSelected[0]))){
+    console.log("please select a unique point");
+    return;
+  }
+  var x = -1;
+  for(var i = 0; i < cuelist.length;i++){
+    console.log(criticalPointsList.indexOf(pointsSelected[0]));
+    console.log(cuelist[i][0]);
+    if(criticalPointsList.indexOf(pointsSelected[0]) < cuelist[i][0]){
+      x = i;
+      break;
+    }
+    else{
+      x = cuelist.length;
+    }
+  }
+  cuelist.splice(x,0,[criticalPointsList.indexOf(pointsSelected[0]),fullMouseHistoryPoints.indexOf[pointsSelected[0]]]);
+  console.log(cuelist);
+  if (cueViewOn){
+    cueViewOn=false;
+    cueView();
+  }
+}
