@@ -2,6 +2,7 @@
 //#region Side Navbar
 /*---------------------------Begin Side Navbar Stuff---------------------*/
 
+// used to changed between the sliding panel on the right hand side
 var optionsList = document.getElementsByClassName("sideBarDetails");
 function callSideBar(number) {
   for (i = 0; i < optionsList.length; i++) {
@@ -10,9 +11,13 @@ function callSideBar(number) {
         document.getElementsByClassName("sideBarDetails")[number].style.left ==
         "-300px"
       ) {
+        //else just 40 pixels to the left
+        //doing that causes it to be hidden behing the right side panel
         document.getElementsByClassName("sideBarDetails")[number].style.left =
           "40px";
+
       } else {
+         // the panel is shifted to the left by 300 pixel when it is toggled
         document.getElementsByClassName("sideBarDetails")[number].style.left =
           "-300px";
       }
@@ -21,6 +26,7 @@ function callSideBar(number) {
     }
   }
 }
+
 document.getElementById("leftCont").onmouseover = function (event) {
   for (var i = 0; i < optionsList.length; i++) {
     if (optionsList[i].contains(event.target) == false) {
