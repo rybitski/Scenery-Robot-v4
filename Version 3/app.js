@@ -2,8 +2,24 @@ var express = require("express");
 app = express();
 const port = process.env.PORT || 3000;
 
+const rateLimit = require('express-rate-limit')
+
+const limiter = rateLimit({
+	windowMs: 1000, // 1 second
+	max: 1, // Limit each IP to 1 requests per `window` (here, per 1 second)
+	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+})
+
+// Apply the rate limiting middleware to all requests
+
+
 app.use(express.static(__dirname + ""));
 app.use(express.json());
+app.use(limiter)
+
+
+
 
 var pythonpath = 'python'
 if (process.platform === 'darwin'){
@@ -20,35 +36,35 @@ app.listen(port, () => {
 });
 
 //#region Robot Control API's
-var control_object = [];
+// var control_object = [];
 
-app.post("/control", function (req, res) {
-  control_object = req.body.path;
-});
+// app.post("/control", function (req, res) {
+//   control_object = req.body.path;
+// });
 
-app.put("/control", function (req, res) {
-  control_object = req.body.path;
-});
+// app.put("/control", function (req, res) {
+//   control_object = req.body.path;
+// });
 
-app.get("/control", function (req, res) {
-  res.send(control_object);
-});
+// app.get("/control", function (req, res) {
+//   res.send(control_object);
+// });
 //#endregion
 
 //#region Data Transfer API's
 var path = [];
 
-app.post("/input", function (req, res) {
+app.post("/input", (req, res) =>{
   path = req.body.path;
-});
+});  
 
-app.get("/input", function (req, res) {
+app.get("/input", (req, res) =>{
   res.send(path);
 });
 //#endregion
 
 //#region B-Spline API's
-app.post("/call-external-python-script", function(req, res){
+app.post("/call-external-python-script", (req, res) =>{
   console.log("inside call-external-python-script api");
   callWhenclicked(req.body.path);
 });
@@ -72,7 +88,7 @@ function callWhenclicked(dataInput){
 }
 
 var returnedData;
-app.get("/b-spline-returned-data", function (req, res){
+app.get("/b-spline-returned-data", (req, res)=>{
  res.send(returnedData);
 });
 

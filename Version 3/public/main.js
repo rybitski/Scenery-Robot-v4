@@ -70,6 +70,8 @@ function sendPath() {
   
   console.log("sent data");
   
+  //OSC packet
+
   //updateControlEndpoint();
 }
 //#endregion
